@@ -9,7 +9,7 @@ import InfoModal from '@/components/InfoModal';
 import useMovieList from '@/hooks/useMovieList';
 import useFavorites from '@/hooks/useFavorites';
 import useInfoModalStore from '@/hooks/useInfoModalStore';
-import RootLayout from './layout';
+import RootLayout from '../components/layout';
 
 export async function getServerSideProps(context: NextPageContext) {
   const session = await getSession(context);
@@ -39,12 +39,12 @@ const Home = () => {
   const handleChangeValue = (value: string) => {
     if(targetRef.current){
       (targetRef.current as HTMLDivElement).scrollIntoView({behavior: 'smooth'});
-    }
+    }      
     setSearchValue(value)
   }
 
   return (
-    <RootLayout onChangeValue ={handleChangeValue}>
+    <RootLayout onChangeValue = {handleChangeValue}>
         <InfoModal visible={isOpen} onClose={closeModal} />
         <Billboard />
         <div ref={targetRef} className="pb-40">

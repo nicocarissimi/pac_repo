@@ -1,9 +1,7 @@
 import React from 'react'
-import RootLayout from './layout'
+import RootLayout from '../components/layout'
 import useMovieList from '@/hooks/useMovieList';
 import MovieList from '@/components/MovieList';
-
-
 
 
 const Playlist = () => {
