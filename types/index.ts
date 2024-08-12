@@ -7,3 +7,9 @@ export interface MovieInterface {
   duration: string;
   genre: string;
 }
+
+
+export type Playlist = {
+  id: string;
+  name: string;
+}
