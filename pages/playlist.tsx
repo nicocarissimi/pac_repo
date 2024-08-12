@@ -22,7 +22,7 @@ const PlaylistPage = () => {
 
   return (
     <RootLayout onChangeValue={handleChangeSearchValue}>
-      <div className='flex w-full h-[800px] absolute mt-20 justify-around gap-10 p-10'>
+      <div className='flex w-full h-[850px] absolute mt-20 justify-around gap-10 p-10'>
           <div className='flex flex-col h-full justify-between w-[40%]'>
             <div className='rounded-xl p-8 bg-gray-500 h-[80%]'>
             <input id='search' className='bg-black rounded-2xl p-2 text-white placeholder:text-white w-full' placeholder='search your father' />
@@ -37,7 +37,7 @@ const PlaylistPage = () => {
           </div>
           <button className='p-10 bg-gray-500 rounded-2xl w-full relative text-white'>Add playlist</button>
         </div>
-        <div className='rounded-xl p-8 w-[100%] bg-gray-500'>
+        <div className='rounded-xl p-8 w-[100%] bg-gray-500 flex flex-col gap-6'>
           <input className='rounded-2xl bg-black w-full p-2 text-white placeholder:text-white' placeholder='search your mother' />
           <ContentList />
         </div>
