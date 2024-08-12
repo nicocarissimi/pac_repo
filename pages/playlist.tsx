@@ -29,7 +29,7 @@ const PlaylistPage = () => {
             <div className='flex flex-col justify-between h-[90%] w-full'>
               <div className='flex flex-col gap-2 mt-10'>
               {playlists.map((playlist) =>{
-                return <div className='rounded-2xl bg-black text-white p-2'>{playlist.name}</div>
+                return <div className='rounded-2xl bg-black text-white p-2' key={playlist.id}>{playlist.name}</div>
               })}
               </div>
               <ToggleSwitch />
