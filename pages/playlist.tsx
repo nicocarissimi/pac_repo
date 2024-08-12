@@ -35,7 +35,7 @@ const PlaylistPage = () => {
               <ToggleSwitch />
             </div>
           </div>
-          <button className='p-10 bg-black rounded-2xl w-full relative text-white'>Add playlist</button>
+          <button className='p-10 bg-gray-500 rounded-2xl w-full relative text-white'>Add playlist</button>
         </div>
         <div className='rounded-xl p-8 w-[100%] bg-gray-500'>
           <input className='rounded-2xl bg-black w-full p-2 text-white placeholder:text-white' placeholder='search your mother' />
