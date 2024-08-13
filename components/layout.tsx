@@ -1,5 +1,4 @@
 import Navbar from "@/components/Navbar";
-import React, { useState } from "react";
 
 const RootLayout = ({ children, onChangeValue } : {children: React.ReactNode, onChangeValue: (value: string) => void }) => {
 

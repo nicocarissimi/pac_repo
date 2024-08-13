@@ -1,5 +1,5 @@
-import React, { ChangeEvent, useCallback, useEffect, useState } from 'react';
-import { BellIcon, MagnifyingGlassIcon, ChevronDownIcon, UsersIcon } from '@heroicons/react/24/outline';
+import React, { useCallback, useEffect, useState } from 'react';
+import { BellIcon, MagnifyingGlassIcon, ChevronDownIcon } from '@heroicons/react/24/outline';
 
 import AccountMenu from '@/components/AccountMenu';
 import MobileMenu from '@/components/MobileMenu';
@@ -17,7 +17,7 @@ const Navbar = ({onSearchChange}:{onSearchChange: (value: string)=> void }) => {
 
   useEffect(() => {
     const handleScroll = () => {
-      console.log(window.scrollY)
+      // console.log(window.scrollY)
       if (window.scrollY >= TOP_OFFSET) {
         setShowBackground(true)
       } else {

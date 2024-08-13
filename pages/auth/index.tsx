@@ -49,7 +49,7 @@ const Auth = () => {
 
       router.push('/profiles');
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   }, [email, password, router]);
 

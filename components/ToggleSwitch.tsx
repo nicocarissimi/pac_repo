@@ -1,5 +1,4 @@
-import React from 'react';
-import { useState } from 'react';
+import React, {useState} from 'react';
 
 interface ToggleProps {
   onChange?: any;
@@ -14,7 +13,7 @@ interface ToggleProps {
 
   const handleToggle = () => {
     console.log(boolFlag)
-    if(boolFlag != null){
+    if(boolFlag !== null){
       setBool(!boolFlag)
       setIsActive(!isActive)
       return

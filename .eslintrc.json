@@ -1,6 +1,18 @@
 {
   "extends": "next/core-web-vitals",
   "rules": {
-    "@next/next/no-img-element": "off"
+    "@next/next/no-img-element": "off",
+    "no-console": "warn",  // Avvisa quando viene usato console.log
+    "no-unused-vars": "warn",  // Avvisa per variabili dichiarate ma non utilizzate
+    "eqeqeq": "error",  // Richiede l'uso di === e !== anziché == e !=
+    "curly": "error",  // Richiede l'uso di graffe per tutti i blocchi condizionali
+    "react/react-in-jsx-scope": "off",  // Disattivato perché Next.js importa automaticamente React
+    "react/prop-types": "off",  // Disattivato se si utilizza TypeScript per il controllo dei tipi
+    "jsx-a11y/anchor-is-valid": "warn",  // Avvisa quando viene utilizzato un tag <a> senza href valido
+    "no-debugger": "error",  // Proibisce l'uso di debugger
+    "no-duplicate-imports": "error",  // Impedisce import duplicati
+    "prefer-const": "warn",  // Suggerisce l'uso di const per variabili che non vengono riassegnate
+    "react/jsx-key": "warn",  // Avvisa se manca la chiave nei componenti di lista JSX
+    "react/no-unescaped-entities": "warn"  // Avvisa per caratteri non scappati come <, >, ", '
   }
 }
