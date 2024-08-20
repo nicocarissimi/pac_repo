@@ -9,7 +9,9 @@ export interface MovieInterface {
 }
 
 
-export type Playlist = {
+export interface PlaylistInterface {
   id: string;
+  userId: string;
   name: string;
+  isPublic: boolean;
 }

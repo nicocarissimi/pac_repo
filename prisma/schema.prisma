@@ -23,6 +23,8 @@ model User {
   sessions Session[]
   accounts Account[]
   favoriteIds String[] @db.ObjectId
+  playlists  Playlist[]
+  categories UsersInCategories[]
 }
 
 model Account {
@@ -43,7 +45,12 @@ model Account {
 
   @@unique([provider, providerAccountId])
 }
-
+model Category{
+  id      String   @id @default(auto()) @map("_id") @db.ObjectId
+  name    String
+  videos  VideosInCategories []
+  user UsersInCategories[]
+}
 model Session {
   id String @id @default(auto()) @map("_id") @db.ObjectId
   sessionToken String @unique
@@ -53,20 +60,59 @@ model Session {
 }
 
 model VerificationToken {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
-  identifier String
-  token      String   @unique
-  expires    DateTime
+  id          String @id @default(auto()) @map("_id") @db.ObjectId
+  identifier  String
+  token       String   @unique
+  expires     DateTime
 
   @@unique([identifier, token])
 }
 
-model Movie {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
-  title String
-  description String
-  videoUrl String
-  thumbnailUrl String
-  genre String
-  duration String
+model Video {
+  id            String @id @default(auto()) @map("_id") @db.ObjectId
+  title         String
+  description   String
+  videoUrl      String
+  thumbnailUrl  String
+  categories    VideosInCategories[]
+  duration      String
+  playlist      VideosInPlaylists[]
 }
+model Playlist {
+  id      String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId  String   @db.ObjectId
+  user    User     @relation(fields: [userId], references: [id])
+  name    String
+  videos  VideosInPlaylists[]
+  isPublic Boolean
+}
+
+model VideosInPlaylists{
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  video       Video @relation(fields: [videoId], references: [id], onDelete: Cascade)
+  videoId     String @db.ObjectId
+  playlist    Playlist @relation(fields: [playlistId], references: [id], onDelete: Cascade)
+  playlistId  String @db.ObjectId
+  assignedAt  DateTime @default(now())
+
+  @@unique([videoId, playlistId])
+}
+
+
+model UsersInCategories{
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  user        User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId      String @db.ObjectId
+  category    Category @relation(fields:[categoryId], references: [id], onDelete: Cascade)
+  categoryId  String @db.ObjectId
+  @@unique([userId, categoryId])
+}
+model VideosInCategories{
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  video       Video @relation(fields: [videoId], references: [id], onDelete: Cascade)
+  videoId     String @db.ObjectId
+  category    Category @relation(fields:[categoryId], references: [id], onDelete: Cascade)
+  categoryId  String @db.ObjectId
+  @@unique([videoId, categoryId])
+}
+
