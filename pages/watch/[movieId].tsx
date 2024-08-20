@@ -8,7 +8,7 @@ const Watch = () => {
   const { movieId } = router.query;
 
   const { data } = useMovie(movieId as string);
-  
+  const isYouTube = data?.videoUrl?.includes('youtube')
   return (
     <div className="h-screen w-screen bg-black">
       <nav className="fixed w-full p-4 z-10 flex flex-row items-center gap-8 bg-black bg-opacity-70">
@@ -17,7 +17,20 @@ const Watch = () => {
           <span className="font-light">Watching:</span> {data?.title}
         </p>
       </nav>
-      <video className="h-full w-full" autoPlay controls src={data?.videoUrl}></video>
+      {isYouTube ? (
+        <div className='pb-2 h-0'>
+          <iframe
+            className='absolute h-full w-full'
+            src={`https://www.youtube.com/embed/${data?.videoUrl.split('v=')[1]}`}
+            title="YouTube video player"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+          ></iframe>
+        </div>
+      ) : (
+        <video className="h-full w-full" autoPlay controls src={data?.videoUrl} preload='auto'></video>
+      )}
+      
     </div>
   )
 }
