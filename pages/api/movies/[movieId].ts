@@ -20,7 +20,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       throw new Error('Missing Id');
     }
 
-    const movies = await prismadb.movie.findUnique({
+    const movies = await prismadb.video.findUnique({
       where: {
         id: movieId
       }

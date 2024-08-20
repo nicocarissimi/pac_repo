@@ -11,7 +11,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       const { movieId } = req.body;
   
-      const existingMovie = await prismadb.movie.findUnique({
+      const existingMovie = await prismadb.video.findUnique({
         where: {
           id: movieId,
         }
@@ -40,7 +40,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       const { movieId } = req.body;
 
-      const existingMovie = await prismadb.movie.findUnique({
+      const existingMovie = await prismadb.video.findUnique({
         where: {
           id: movieId,
         }

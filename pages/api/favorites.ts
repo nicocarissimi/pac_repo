@@ -11,7 +11,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     const { currentUser } = await serverAuth(req);
 
-    const favoritedMovies = await prismadb.movie.findMany({
+    const favoritedMovies = await prismadb.video.findMany({
       where: {
         id: {
           in: currentUser?.favoriteIds,
