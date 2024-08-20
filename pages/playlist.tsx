@@ -1,14 +1,44 @@
-import React, { useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import RootLayout from '../components/layout'
 import useMovieList from '@/hooks/useMovieList';
-import { Playlist } from '@/types';
+import { PlaylistInterface } from '@/types';
 import ContentList from '@/components/ContentList';
 import ToggleSwitch from '@/components/ToggleSwitch';
+import { NextPageContext } from 'next';
+import { getSession } from 'next-auth/react';
+import axios from 'axios';
+import usePlaylist from '@/hooks/usePlaylist';
+import { useSWRConfig } from 'swr';
+import useHotPlaylist from '@/hooks/useHotPlaylist';
 
+
+
+export async function getServerSideProps(context: NextPageContext) {
+  const session = await getSession(context);
+
+  if (!session) {
+    return {
+      redirect: {
+        destination: '/auth',
+        permanent: false,
+      }
+    }
+  }
+
+  return {
+    props: {}
+  }
+}
+
+// useState -> useEffect chiama usePlaylist
 
 const PlaylistPage = () => {
+  const { mutate } = useSWRConfig()
+  const { data: user_playlist = [] } = usePlaylist();
+  const { data: hot_playlist=[]} = useHotPlaylist();
   const [playlistName, setPlaylistName] = useState('');
   const [isPublic, setIsPublic] = useState(true);
+  const [myPlaylists, setMyPlaylists] = useState(true)
   const [showModal, setShowModal] = useState(false);
   const { data: movies = [] } = useMovieList();
   const handleAddPlaylist = () => {
@@ -21,26 +51,35 @@ const PlaylistPage = () => {
   const handleToggleSwitch = () => {
     setIsPublic(!isPublic);
   };
-  const handleSavePlaylist = () => {
+  const handleSavePlaylist = useCallback(async () => {
     const newPlaylist = {
       name: playlistName,
       isPublic,
     };
+    try {
+      await axios.post('/api/playlist', {
+        ...newPlaylist
+      });
+    }
+      catch (error) {
+        console.log(error);
+    }
     // Here you would typically update the playlist state or make an API call to save the playlist
     console.log('New Playlist:', newPlaylist);
     handleCloseModal();
-  };
+    mutate('/api/playlists')
+  },[playlistName, isPublic, handleCloseModal]);
   
 
   const handleChangeSearchValue = (value: string) => {
     console.log(value)
   }
 
-  const playlists: Playlist[] = [
-    {id: "1", name:"primo nome a caso"},
-    {id: "2", name:"secondo nome a caso"},
-    {id: "3", name:"terzo nome a caso"},
-    {id: "4", name:"quarto nome a caso"},
+  const playlists: PlaylistInterface[] = [
+    {id: "1", name:"primo nome a caso", userId:"123", isPublic: false},
+    {id: "2", name:"secondo nome a caso", userId:"123", isPublic: false},
+    {id: "3", name:"terzo nome a caso", userId:"123", isPublic: false},
+    {id: "4", name:"quarto nome a caso", userId:"123", isPublic: false},
   ]
 
   return (
@@ -50,12 +89,28 @@ const PlaylistPage = () => {
             <div className='rounded-xl p-8 bg-gray-500 h-[80%]'>
             <input id='search' className='bg-black rounded-2xl p-2 text-white placeholder:text-white w-full' placeholder='search your father' />
             <div className='flex flex-col justify-between h-[90%] w-full'>
-              <div className='flex flex-col gap-2 mt-10'>
-              {playlists.map((playlist) =>{
+              {myPlaylists? (<div className='flex flex-col gap-2 mt-10'>
+              {user_playlist ? user_playlist.map((playlist: PlaylistInterface) =>{
+                return <div className='rounded-2xl bg-black text-white p-2' key={playlist.id}>{playlist.name}</div>
+              }): playlists.map((playlist: PlaylistInterface) =>{
                 return <div className='rounded-2xl bg-black text-white p-2' key={playlist.id}>{playlist.name}</div>
               })}
-              </div>
-              <ToggleSwitch />
+              
+              </div>):
+              (<div className='flex flex-col gap-2 mt-10'>
+                {hot_playlist.map((playlist: PlaylistInterface) =>{
+                  return <div className='rounded-2xl bg-black text-white p-2' key={playlist.id}>{playlist.name}</div>
+                })}
+                
+                </div>)
+              }
+              
+              <ToggleSwitch 
+              option1='My playlists'
+              option2='Trending now'
+              boolFlag = {myPlaylists}
+              setBool={setMyPlaylists}
+              />
             </div>
           </div>
           <button className='p-10 bg-gray-500 rounded-2xl w-full relative text-white' onClick={handleAddPlaylist}>Add playlist</button>

@@ -13,7 +13,7 @@ interface ToggleProps {
 
   const handleToggle = () => {
     console.log(boolFlag)
-    if(boolFlag !== null){
+    if(boolFlag != null){
       setBool(!boolFlag)
       setIsActive(!isActive)
       return
