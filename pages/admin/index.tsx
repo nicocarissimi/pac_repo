@@ -2,7 +2,7 @@ import { NextPageContext } from 'next';
 import { getSession } from 'next-auth/react';
 import React from 'react'
 import ContentItem from './content-item';
-import { CreateContentDialog } from './create-content-dialog';
+import CreateContentDialog from './CreateContentDialog';
 
 export async function getServerSideProps(context: NextPageContext) {
     const session = await getSession(context);

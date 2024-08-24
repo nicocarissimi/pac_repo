@@ -12,6 +12,10 @@ import { PencilSquareIcon } from "@heroicons/react/24/outline"
 export default function ContentItem({item}: {item: {id:number}}) {
     const tags = [{id:1, name:'tag1'},{id:2, name:'tag2'},{id:3, name:'tag3'}
     ]
+    if (!item) {
+        return <div>No content available</div>;
+      }
+    
     return (
         <Card className="w-full" key={item.id}>
             <CardContent className="flex h-full p-4">

@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { PlusIcon } from "@heroicons/react/24/solid"
 
-export function CreateContentDialog() {
+function CreateContentDialog() {
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -57,3 +57,5 @@ export function CreateContentDialog() {
     </Dialog>
   )
 }
+
+export default CreateContentDialog
