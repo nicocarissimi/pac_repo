@@ -10,6 +10,9 @@ import axios from 'axios';
 import usePlaylist from '@/hooks/usePlaylist';
 import { useSWRConfig } from 'swr';
 import useHotPlaylist from '@/hooks/useHotPlaylist';
+import { ScrollArea } from "@/components/ui/scroll-area"
+import PlaylistDisplay from '@/components/PlaylistDisplay';
+import PlaylistModal from '@/components/PlaylistModal';
 
 
 
@@ -34,13 +37,14 @@ export async function getServerSideProps(context: NextPageContext) {
 
 const PlaylistPage = () => {
   const { mutate } = useSWRConfig()
-  const { data: user_playlist = [] } = usePlaylist();
-  const { data: hot_playlist=[]} = useHotPlaylist();
+  const { data: userPlaylist = [] } = usePlaylist();
+  const { data: hotPlaylist=[]} = useHotPlaylist();
   const [playlistName, setPlaylistName] = useState('');
   const [isPublic, setIsPublic] = useState(true);
   const [myPlaylists, setMyPlaylists] = useState(true)
   const [showModal, setShowModal] = useState(false);
   const { data: movies = [] } = useMovieList();
+
   const handleAddPlaylist = () => {
     setShowModal(true);
   };
@@ -84,81 +88,74 @@ const PlaylistPage = () => {
 
   return (
     <RootLayout onChangeValue={handleChangeSearchValue}>
-      <div className='flex w-full h-[850px] absolute mt-20 justify-around gap-10 p-10'>
+      <div className='flex w-full h-[93%] mt-20 absolute justify-around gap-2 p-10'>
           <div className='flex flex-col h-full justify-between w-[40%]'>
-            <div className='rounded-xl p-8 bg-gray-500 h-[80%]'>
-            <input id='search' className='bg-black rounded-2xl p-2 text-white placeholder:text-white w-full' placeholder='search your father' />
-            <div className='flex flex-col justify-between h-[90%] w-full'>
-              {myPlaylists? (<div className='flex flex-col gap-2 mt-10'>
-              {user_playlist ? user_playlist.map((playlist: PlaylistInterface) =>{
-                return <div className='rounded-2xl bg-black text-white p-2' key={playlist.id}>{playlist.name}</div>
-              }): playlists.map((playlist: PlaylistInterface) =>{
-                return <div className='rounded-2xl bg-black text-white p-2' key={playlist.id}>{playlist.name}</div>
-              })}
-              
-              </div>):
-              (<div className='flex flex-col gap-2 mt-10'>
-                {hot_playlist.map((playlist: PlaylistInterface) =>{
-                  return <div className='rounded-2xl bg-black text-white p-2' key={playlist.id}>{playlist.name}</div>
-                })}
-                
-                </div>)
-              }
-              
-              <ToggleSwitch 
+            <div className='rounded-xl p-8 bg-zinc-900 h-full '>
+            <div className='flex relative mb-5 text-white flex-row'>
+            <div className='flex me-auto ml-2'>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="size-6">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 13.5V3.75m0 9.75a1.5 1.5 0 0 1 0 3m0-3a1.5 1.5 0 0 0 0 3m0 3.75V16.5m12-3V3.75m0 9.75a1.5 1.5 0 0 1 0 3m0-3a1.5 1.5 0 0 0 0 3m0 3.75V16.5m-6-9V3.75m0 3.75a1.5 1.5 0 0 1 0 3m0-3a1.5 1.5 0 0 0 0 3m0 9.75V10.5" />
+            </svg>
+            <span className='ml-5'>Your Library</span> 
+            </div>
+            
+            <div className='block mr-8'>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className='h-full hover:rounded-full hover:bg-zinc-800' onClick={handleAddPlaylist}>
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+            </svg>
+            </div>
+            </div>
+            <ToggleSwitch
               option1='My playlists'
               option2='Trending now'
               boolFlag = {myPlaylists}
               setBool={setMyPlaylists}
               />
+            
+            <div className='flex flex-col h-[90%] w-full mt-10'>
+            <div className="relative w-full">
+              <input
+                id="search"
+                className="bg-zinc-800 rounded-2xl p-2 pl-10 text-gray-500 placeholder:text-gray-500 w-full"
+                placeholder="search your father"
+              />
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="absolute left-3 top-2 w-6 h-6 text-gray-500">
+              <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+              </svg>
+            </div>
+            <ScrollArea className=' mt-5 h-[90%]'>
+            <PlaylistDisplay
+                playlists={myPlaylists ? userPlaylist : hotPlaylist}
+                myPlaylists={myPlaylists}
+              />
+              </ScrollArea>
             </div>
           </div>
-          <button className='p-10 bg-gray-500 rounded-2xl w-full relative text-white' onClick={handleAddPlaylist}>Add playlist</button>
         </div>
-        <div className='rounded-xl p-8 w-[100%] bg-gray-500 flex flex-col gap-6'>
-          <input className='rounded-2xl bg-black w-full p-2 text-white placeholder:text-white' placeholder='search your mother' />
+        <div className='rounded-xl p-8 w-[100%] bg-zinc-900 flex flex-col gap-6'>
+          <div className="relative w-full">
+              <input
+                id="search"
+                className="bg-zinc-800 rounded-2xl p-2 pl-10 text-gray-500 placeholder:text-gray-500 w-full"
+                placeholder="search your father"
+              />
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="absolute left-3 top-2 w-6 h-6 text-gray-500">
+              <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+              </svg>
+            </div>
+          
           <ContentList />
         </div>
       </div>
       {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-          <div className="bg-black p-8 rounded-lg w-[500px]">
-            <h2 className=" text-white text-2xl mb-4">Create New Playlist</h2>
-            <div className="mb-4">
-              <label className="block text-white">Playlist Name</label>
-              <input
-                type="text"
-                value={playlistName}
-                onChange={(e) => setPlaylistName(e.target.value)}
-                className="w-full p-2 border border-gray-300 rounded mt-1"
-                placeholder="Enter playlist name"
-              />
-            </div>
-            <div className="mb-4">
-              
-              <ToggleSwitch 
-                option1='Public'
-                option2='Private'
-                boolFlag = {isPublic}
-                setBool={setIsPublic}
-              />
-            </div>
-            <div className="flex justify-end gap-4">
-              <button
-                className="bg-gray-500 text-white px-4 py-2 rounded"
-                onClick={handleCloseModal}
-              >
-                Cancel
-              </button>
-              <button
-                className="bg-blue-500 text-white px-4 py-2 rounded"
-                onClick={handleSavePlaylist}
-              >
-                Save
-              </button>
-            </div>
-          </div>
-        </div>
+        <PlaylistModal
+          playlistName={playlistName}
+          setPlaylistName={setPlaylistName}
+          isPublic={isPublic}
+          setIsPublic={setIsPublic}
+          onClose={handleCloseModal}
+          onSave={handleSavePlaylist}
+        />
       )}
     </RootLayout>
   )

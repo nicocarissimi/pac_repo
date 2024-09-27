@@ -22,10 +22,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const { currentUser } = await serverAuth(req);
       const playlist = await prismadb.playlist.findMany({
         where: {
-          isPublic : true,
-          NOT:{
-            userId: currentUser.id
-          }
+          isPublic : true
         }
       });
       return res.status(200).json(playlist);
