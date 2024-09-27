@@ -23,7 +23,7 @@ interface ToggleProps {
 
   return (
     <div className="flex justify-between items-center w-full">
-      <div className="relative w-full bg-black rounded-full p-2 flex items-center">
+      <div className="relative w-full bg-zinc-800 rounded-full p-2 flex items-center">
         <div
           onClick={onChange? onChange: handleToggle}
           className={`flex-1 text-center py-2 rounded-full cursor-pointer transition-all duration-300 ${
