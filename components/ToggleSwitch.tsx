@@ -2,14 +2,14 @@ import React, {useState} from 'react';
 
 interface ToggleProps {
   onChange?: any;
-  option1?: string;
-  option2?: string;
-  boolFlag?: boolean;
-  setBool?: any 
+  option1: string;
+  option2: string;
+  boolFlag: boolean;
+  setBool: any 
 }
 
  const ToggleSwitch: React.FC<ToggleProps> = ({ onChange, option1, option2, boolFlag, setBool}) =>{
-  const [isActive, setIsActive] = useState(true);
+  const [isActive, setIsActive] = useState(boolFlag);
 
   const handleToggle = () => {
     console.log(boolFlag)

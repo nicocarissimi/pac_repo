@@ -11,7 +11,7 @@ export interface MovieInterface {
 
 export interface PlaylistInterface {
   id: string;
-  userId: string;
+  userId?: string;
   name: string;
   isPublic: boolean;
 }

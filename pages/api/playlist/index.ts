@@ -6,11 +6,12 @@ import { getSession } from "next-auth/react";
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
 
   try {
-    if (req.method !== 'POST') {
+    if (req.method !== 'POST' && req.method !== 'PUT') {  
         return res.status(405).end();
     }
     const session = await getSession({ req });
-    const { name, isPublic } = req.body;
+    console.log(req.body);
+    const {Playlist} = req.body;
     if (!session?.user?.email) {
       throw new Error('Not signed in');
     }
@@ -23,13 +24,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (!user) {
       throw new Error('Invalid email');
     }
+    if (!Playlist.id) {
+    console.log('No ID provided');
+    }
     try {
-      const newPlaylist = await prismadb.playlist.create({
-        data: {
-          name,
-          userId: user.id,
-          isPublic
-        },
+      const newPlaylist = await prismadb.playlist.upsert({
+        where: { id: Playlist.id },
+        update: { name: Playlist.name, userId: user.id, isPublic: Playlist.isPublic },
+        create: { name: Playlist.name, userId: user.id, isPublic: Playlist.isPublic },
       });
       res.status(201).json(newPlaylist);
     } catch (error) {

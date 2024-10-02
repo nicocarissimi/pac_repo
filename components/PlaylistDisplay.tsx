@@ -31,9 +31,11 @@ const PlaylistDisplay: React.FC<PlaylistDisplayProps> = ({ playlists, myPlaylist
   const [isPublic, setIsPublic] = useState(true);
   const [playlistId, setPlaylistId] = useState('');
 
-  const handleEditPlaylist = (id:string) => {
-    setShowModal(true);
+  const handleEditPlaylist = (id:string, name:string, isPub: boolean) => {
     setPlaylistId(id)
+    setPlaylistName(name);
+    setIsPublic(isPub);
+    setShowModal(true);
   };
   const handleDeletePlaylist = async(id:string) => {
     console.log('Deleting playlist:', id);
@@ -62,7 +64,7 @@ const PlaylistDisplay: React.FC<PlaylistDisplayProps> = ({ playlists, myPlaylist
       isPublic,
     };
     try {
-      await axios.post('/api/playlist', {
+      await axios.put(`/api/playlist/${playlistId}`, {
         ...newPlaylist
       });
     }
@@ -70,7 +72,7 @@ const PlaylistDisplay: React.FC<PlaylistDisplayProps> = ({ playlists, myPlaylist
         console.log(error);
     }
     // Here you would typically update the playlist state or make an API call to save the playlist
-    console.log('New Playlist:', newPlaylist);
+    console.log('Edited Playlist:', newPlaylist);
     handleCloseModal();
     mutate('/api/playlists');
     mutate('/api/playlists?hot=1');
@@ -92,7 +94,7 @@ const PlaylistDisplay: React.FC<PlaylistDisplayProps> = ({ playlists, myPlaylist
               <DropdownMenuContent className="w-56" align='end'>
                   <DropdownMenuItem>
                     <Edit className="mr-2 h-4 w-4" />
-                    <span onClick={()=> handleEditPlaylist(p.id)}>Edit Playlist</span>
+                    <span onClick={()=> handleEditPlaylist(p.id, p.name, p.isPublic)}>Edit Playlist</span>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
                   <AlertDialog open={showAlert}>
@@ -125,12 +127,8 @@ const PlaylistDisplay: React.FC<PlaylistDisplayProps> = ({ playlists, myPlaylist
     </ScrollArea>
     {showModal && (
       <PlaylistModal
-        playlistName={playlistName}
-        setPlaylistName={setPlaylistName}
-        isPublic={isPublic}
-        setIsPublic={setIsPublic}
+        playlist= {{id:playlistId,name:playlistName,isPublic:isPublic}}
         onClose={handleCloseModal}
-        onSave={handleSavePlaylist}
       />
     )}
     </>

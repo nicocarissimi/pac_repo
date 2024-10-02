@@ -9,7 +9,6 @@ import { getSession } from 'next-auth/react';
 import axios from 'axios';
 import usePlaylist from '@/hooks/usePlaylist';
 import { useSWRConfig } from 'swr';
-import useHotPlaylist from '@/hooks/useHotPlaylist';
 import { ScrollArea } from "@/components/ui/scroll-area"
 import PlaylistDisplay from '@/components/PlaylistDisplay';
 import PlaylistModal from '@/components/PlaylistModal';
@@ -38,7 +37,7 @@ export async function getServerSideProps(context: NextPageContext) {
 const PlaylistPage = () => {
   const { mutate } = useSWRConfig()
   const { data: userPlaylist = [] } = usePlaylist();
-  const { data: hotPlaylist=[]} = useHotPlaylist();
+  const { data: hotPlaylist=[]} = usePlaylist(true);
   const [playlistName, setPlaylistName] = useState('');
   const [isPublic, setIsPublic] = useState(true);
   const [myPlaylists, setMyPlaylists] = useState(true)
@@ -61,7 +60,7 @@ const PlaylistPage = () => {
     };
     try {
       await axios.post('/api/playlist', {
-        ...newPlaylist
+        newPlaylist
       });
     }
       catch (error) {
@@ -142,12 +141,7 @@ const PlaylistPage = () => {
       </div>
       {showModal && (
         <PlaylistModal
-          playlistName={playlistName}
-          setPlaylistName={setPlaylistName}
-          isPublic={isPublic}
-          setIsPublic={setIsPublic}
           onClose={handleCloseModal}
-          onSave={handleSavePlaylist}
         />
       )}
     </RootLayout>

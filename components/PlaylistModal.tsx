@@ -1,27 +1,60 @@
-import React from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import ToggleSwitch from '@/components/ToggleSwitch';
+import { PlaylistInterface } from '@/types';
+import { useSWRConfig } from 'swr';
+import axios from 'axios';
+
 
 interface PlaylistModalProps {
-  playlistName: string;
-  setPlaylistName: (value: string) => void;
-  isPublic: boolean;
-  setIsPublic: (value: boolean) => void;
+  playlist?: PlaylistInterface;
   onClose: () => void;
-  onSave: () => void;
 }
 
 const PlaylistModal: React.FC<PlaylistModalProps> = ({
-  playlistName,
-  setPlaylistName,
-  isPublic,
-  setIsPublic,
+  playlist,
   onClose,
-  onSave,
 }) => {
+  const {mutate} = useSWRConfig();
+  const [playlistName, setPlaylistName] = useState('');
+  const [isPublic, setIsPublic] = useState(playlist? playlist.isPublic : true);
+  useEffect(() => {
+    if (playlist) {
+      setPlaylistName(playlist.name);
+      setIsPublic(playlist.isPublic);
+    }
+  }, [playlist])
+
+  const onSave = useCallback(async() =>{
+    const Playlist = {
+      name: playlistName,
+      isPublic,
+      id: playlist? playlist.id : null,
+    };
+    try {
+      if(!playlist){
+        await axios.post('/api/playlist', {
+          Playlist
+        });
+      }else{
+        console.log("Updating playlist:", Playlist);
+        await axios.put('/api/playlist', {
+          Playlist
+        });
+      }
+    }
+      catch (error) {
+        console.log(error);
+    }
+    // Here you would typically update the playlist state or make an API call to save the playlist
+    console.log('New Playlist:', Playlist);
+    onClose();
+    mutate('/api/playlists');
+    mutate('/api/playlists?hot=1');
+  }, [playlistName, isPublic, playlist]);
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
       <div className="bg-black p-8 rounded-lg w-[500px]">
-        <h2 className="text-white text-2xl mb-4">Create New Playlist</h2>
+        <h2 className="text-white text-2xl mb-4">{playlist? 'Edit Playlist': 'Create Playlist'}</h2>
         <div className="mb-4">
           <label className="block text-white">Playlist Name</label>
           <input
