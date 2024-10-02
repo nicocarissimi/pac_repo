@@ -19,7 +19,7 @@ const PlaylistModal: React.FC<PlaylistModalProps> = ({
   onSave,
 }) => {
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
       <div className="bg-black p-8 rounded-lg w-[500px]">
         <h2 className="text-white text-2xl mb-4">Create New Playlist</h2>
         <div className="mb-4">

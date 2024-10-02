@@ -70,7 +70,8 @@ const PlaylistPage = () => {
     // Here you would typically update the playlist state or make an API call to save the playlist
     console.log('New Playlist:', newPlaylist);
     handleCloseModal();
-    mutate('/api/playlists')
+    mutate('/api/playlists');
+    mutate('/api/playlists?hot=1');
   },[playlistName, isPublic, handleCloseModal]);
   
 

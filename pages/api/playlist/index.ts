@@ -7,9 +7,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   try {
     if (req.method !== 'POST') {
-      return res.status(405).end();
+        return res.status(405).end();
     }
-
     const session = await getSession({ req });
     const { name, isPublic } = req.body;
     if (!session?.user?.email) {
@@ -36,11 +35,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: 'Error creating playlist' });
-    }
   }
-    catch(error){
-      console.log(error);
-      return res.status(500).end();
-    }
- 
+  } catch(error){
+    console.log(error);
+    return res.status(500).end();
+  }
 }
