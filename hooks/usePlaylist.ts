@@ -1,8 +1,8 @@
 import useSwr from 'swr'
 import fetcher from '@/libs/fetcher';
 
-const usePlaylist = () => {
-  const { data, error, isLoading, mutate } = useSwr('/api/playlists', fetcher, {
+const usePlaylist = (hot?: boolean) => {
+  const { data, error, isLoading, mutate } = useSwr(hot ? '/api/playlists?hot=1' : '/api/playlists', fetcher, {
     revalidateIfStale: false,
     revalidateOnFocus: false,
     revalidateOnReconnect: false,
