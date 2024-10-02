@@ -80,7 +80,7 @@ const PlaylistPage = () => {
   }
 
   return (
-    <RootLayout onChangeValue={handleChangeSearchValue}>
+    <RootLayout>
       <div className='flex w-full h-[90%] mt-20 absolute justify-around gap-2 p-2'>
           <div className='flex flex-col h-full justify-between w-[40%]'>
             <div className='rounded-xl p-8 bg-zinc-900 h-full '>

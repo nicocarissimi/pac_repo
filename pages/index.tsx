@@ -43,7 +43,7 @@ const Home = () => {
   }
 
   return (
-    <RootLayout onChangeValue = {handleChangeValue}>
+    <RootLayout>
         <InfoModal visible={isOpen} onClose={closeModal} />
         <Billboard />
         <div ref={targetRef} className="pb-40">

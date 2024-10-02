@@ -1,11 +1,13 @@
 import Navbar from "@/components/Navbar";
 
-const RootLayout = ({ children, onChangeValue } : {children: React.ReactNode, onChangeValue: (value: string) => void }) => {
+const RootLayout = ({ children } : {children: React.ReactNode}) => {
 
     return (
-        <div>
-            <Navbar onSearchChange={(event) => onChangeValue(event)} />
-            {children}
+        <div className="h-full">
+            <Navbar />
+            <main className="mt-20">
+                {children}
+            </main>
         </div>
     );
 };

@@ -5,15 +5,18 @@ import AccountMenu from '@/components/AccountMenu';
 import MobileMenu from '@/components/MobileMenu';
 import NavbarItem from '@/components/NavbarItem';
 import { useRouter } from 'next/router';
+import useCurrentUser from '@/hooks/useCurrentUser';
+import { Role } from '@/libs/definitions';
 
 const TOP_OFFSET = 66;
 
-const Navbar = ({onSearchChange}:{onSearchChange: (value: string)=> void }) => {
+const Navbar = () => {
   const [showAccountMenu, setShowAccountMenu] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [showBackground, setShowBackground] = useState(false);
   const [showSearch, setShowSearch] = useState<boolean>(false);
   const router = useRouter()
+  const { data: currentUser } = useCurrentUser();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -44,20 +47,14 @@ const Navbar = ({onSearchChange}:{onSearchChange: (value: string)=> void }) => {
     setShowSearch((current) => !current);
   }, []);
 
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = event.target.value;
-    onSearchChange(value);
-  }
-
-
-
   return (
-    <nav className="w-full fixed z-40">
+    <nav className="w-full fixed z-50 top-0">
       <div className={`px-4 md:px-16 py-6 flex flex-row items-center transition duration-500 ${showBackground ? 'bg-zinc-900 bg-opacity-90' : ''}`}>
         <img src="/images/logo.png" className="h-4 lg:h-7" alt="Logo"/>
         <div className="flex-row ml-8 gap-7 hidden lg:flex">
           <div onClick={()=>router.push('/')}><NavbarItem label="Home" active /></div>
           <div onClick={()=>router.push('/playlist')}><NavbarItem label="Playlist" /></div>
+          {currentUser?.role === Role.ADMIN && <div onClick={()=>router.push('/admin')}><NavbarItem label='Dashboard' /></div>}
         </div>
         <div onClick={toggleMobileMenu} className="lg:hidden flex flex-row items-center gap-2 ml-8 cursor-pointer relative">
           <p className="text-white text-sm">Browse</p>
@@ -65,11 +62,6 @@ const Navbar = ({onSearchChange}:{onSearchChange: (value: string)=> void }) => {
           <MobileMenu visible={showMobileMenu} />
         </div>
         <div className="flex flex-row ml-auto gap-7 items-center"> 
-          {showSearch &&
-            <div>
-                <input className='w-full rounded-xl bg-gray-500 p-2 text-white placeholder-zinc-200 focus:outline-none'  placeholder='Search content...' onChange={handleInputChange}/>
-            </div>
-          }
           <div className="text-gray-200 hover:text-gray-300 cursor-pointer transition"  onClick={toggleSearch}>
             <MagnifyingGlassIcon className="w-6" />
           </div>
