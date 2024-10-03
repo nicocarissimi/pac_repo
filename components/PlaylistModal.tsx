@@ -1,8 +1,8 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import ToggleSwitch from '@/components/ToggleSwitch';
-import { PlaylistInterface } from '@/types';
 import { useSWRConfig } from 'swr';
 import axios from 'axios';
+import { PlaylistInterface } from '@/libs/definitions';
 
 
 interface PlaylistModalProps {

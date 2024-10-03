@@ -3,15 +3,15 @@ import { useRouter } from 'next/router';
 import { ChevronDownIcon } from '@heroicons/react/24/outline';
 import { PlayIcon } from '@heroicons/react/24/solid';
 
-import { MovieInterface } from '@/types';
 import FavoriteButton from '@/components/FavoriteButton';
 import useInfoModalStore from '@/hooks/useInfoModalStore';
+import { VideoInterface } from '@/libs/definitions';
 
-interface MovieCardProps {
-  data: MovieInterface;
+interface VideoCardProps {
+  data: VideoInterface;
 }
 
-const MovieCard: React.FC<MovieCardProps> = ({ data }) => {
+const VideoCard: React.FC<VideoCardProps> = ({ data }) => {
   const router = useRouter();
   const { openModal } = useInfoModalStore();
 
@@ -94,4 +94,4 @@ const MovieCard: React.FC<MovieCardProps> = ({ data }) => {
   )
 }
 
-export default MovieCard;
+export default VideoCard;

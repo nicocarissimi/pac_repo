@@ -5,10 +5,10 @@ import { getSession } from 'next-auth/react';
 import Billboard from '@/components/Billboard';
 import MovieList from '@/components/MovieList';
 import InfoModal from '@/components/InfoModal';
-import useMovieList from '@/hooks/useMovieList';
 import useFavorites from '@/hooks/useFavorites';
 import useInfoModalStore from '@/hooks/useInfoModalStore';
 import RootLayout from '../components/layout';
+import useVideo from '@/hooks/useVideo';
 
 export async function getServerSideProps(context: NextPageContext) {
   const session = await getSession(context);
@@ -28,7 +28,7 @@ export async function getServerSideProps(context: NextPageContext) {
 }
 
 const Home = () => {
-  const { data: movies = [] } = useMovieList();
+  const { data: movies = [] } = useVideo();
   const { data: favorites = [] } = useFavorites();
   const {isOpen, closeModal} = useInfoModalStore();
   const targetRef = useRef<HTMLDivElement>(null);

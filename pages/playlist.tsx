@@ -1,12 +1,9 @@
-import React, { useCallback, useState } from 'react'
+import React, { useState } from 'react'
 import RootLayout from '../components/layout'
-import useMovieList from '@/hooks/useMovieList';
-import { PlaylistInterface } from '@/types';
 import ContentList from '@/components/ContentList';
 import ToggleSwitch from '@/components/ToggleSwitch';
 import { NextPageContext } from 'next';
 import { getSession } from 'next-auth/react';
-import axios from 'axios';
 import usePlaylist from '@/hooks/usePlaylist';
 import { useSWRConfig } from 'swr';
 import { ScrollArea } from "@/components/ui/scroll-area"
@@ -50,37 +47,10 @@ const PlaylistPage = () => {
   const handleCloseModal = () => {
     setShowModal(false);
   };
-  const handleToggleSwitch = () => {
-    setIsPublic(!isPublic);
-  };
-  const handleSavePlaylist = useCallback(async () => {
-    const newPlaylist = {
-      name: playlistName,
-      isPublic,
-    };
-    try {
-      await axios.post('/api/playlist', {
-        newPlaylist
-      });
-    }
-      catch (error) {
-        console.log(error);
-    }
-    // Here you would typically update the playlist state or make an API call to save the playlist
-    console.log('New Playlist:', newPlaylist);
-    handleCloseModal();
-    mutate('/api/playlists');
-    mutate('/api/playlists?hot=1');
-  },[playlistName, isPublic, handleCloseModal]);
-  
-
-  const handleChangeSearchValue = (value: string) => {
-    console.log(value)
-  }
 
   return (
     <RootLayout>
-      <div className='flex w-full h-[90%] mt-20 absolute justify-around gap-2 p-2'>
+      <div className='flex w-full h-[90%] absolute justify-around gap-2 p-2'>
           <div className='flex flex-col h-full justify-between w-[40%]'>
             <div className='rounded-xl p-8 bg-zinc-900 h-full '>
             <div className='flex relative mb-5 text-white flex-row'>

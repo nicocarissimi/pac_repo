@@ -151,11 +151,6 @@ export async function getServerSideProps(context: NextPageContext) {
                           <TableCell className="font-medium w-80">
                             {video.description}                          
                           </TableCell>
-                          <TableCell>
-                            { video.genre.map((g: string) =>
-                              <Badge variant="outline">{g}</Badge>
-                            )}
-                          </TableCell>
                           <TableCell className="hidden md:table-cell">
                             1h
                           </TableCell>
@@ -172,7 +167,6 @@ export async function getServerSideProps(context: NextPageContext) {
                                 </Button>
                               </DropdownMenuTrigger>
                               <DropdownMenuContent align="end">
-                                <DropdownMenuLabel>Actions</DropdownMenuLabel>
                                 <DropdownMenuItem>Edit</DropdownMenuItem>
                                 <DropdownMenuItem>Delete</DropdownMenuItem>
                               </DropdownMenuContent>
