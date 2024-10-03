@@ -1,6 +1,5 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
   previewFeatures = ["mongoDb"]
@@ -24,7 +23,8 @@ model User {
   accounts Account[]
   favoriteIds String[] @db.ObjectId
   playlists  Playlist[]
-  categories UsersInCategories[]
+  favoriteCategories UsersInCategories[]
+  role String
 }
 
 model Account {
@@ -40,7 +40,6 @@ model Account {
   scope              String?
   id_token           String?  @db.String
   session_state      String?
-
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
@@ -78,6 +77,7 @@ model Video {
   duration      String
   playlist      VideosInPlaylists[]
 }
+
 model Playlist {
   id      String   @id @default(auto()) @map("_id") @db.ObjectId
   userId  String   @db.ObjectId
@@ -98,7 +98,6 @@ model VideosInPlaylists{
   @@unique([videoId, playlistId])
 }
 
-
 model UsersInCategories{
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
   user        User @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -107,6 +106,7 @@ model UsersInCategories{
   categoryId  String @db.ObjectId
   @@unique([userId, categoryId])
 }
+
 model VideosInCategories{
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
   video       Video @relation(fields: [videoId], references: [id], onDelete: Cascade)
