@@ -1,6 +1,7 @@
 import bcrypt from 'bcrypt';
 import { NextApiRequest, NextApiResponse } from 'next';
 import prismadb from '@/libs/prismadb';
+import { Role } from '@/libs/definitions';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
@@ -29,6 +30,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         hashedPassword,
         image: '',
         emailVerified: new Date(),
+        role: Role.USER
       }
     })
 
