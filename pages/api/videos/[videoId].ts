@@ -7,15 +7,28 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (req.method !== 'GET') {
       return res.status(405).end();
     }
-    try {
-      await serverAuth(req);
-    } catch (error) {
-      console.log(error)
+
+    await serverAuth(req);
+
+    const { videoId } = req.query;
+
+    if (typeof videoId !== 'string') {
+      throw new Error('Invalid Id');
     }
-    const movies = await prismadb.video.findMany();
+
+    if (!videoId) {
+      throw new Error('Missing Id');
+    }
+
+    const movies = await prismadb.video.findUnique({
+      where: {
+        id: videoId
+      }
+    });
+
     return res.status(200).json(movies);
   } catch (error) {
-    console.error({ error })
+    console.error(error);
     return res.status(500).end();
   }
 }
