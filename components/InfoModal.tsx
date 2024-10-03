@@ -4,7 +4,7 @@ import { XMarkIcon } from '@heroicons/react/24/outline';
 import PlayButton from '@/components/PlayButton';
 import FavoriteButton from '@/components/FavoriteButton';
 import useInfoModalStore from '@/hooks/useInfoModalStore';
-import useMovie from '@/hooks/useVideo';
+import useVideo from '@/hooks/useVideo';
 
 interface InfoModalProps {
   visible?: boolean;
@@ -14,8 +14,8 @@ interface InfoModalProps {
 const InfoModal: React.FC<InfoModalProps> = ({ visible, onClose }) => {
   const [isVisible, setIsVisible] = useState<boolean>(!!visible);
 
-  const { movieId } = useInfoModalStore();
-  const { data = {} } = useMovie(movieId);
+  const { videoId } = useInfoModalStore();
+  const { data = {} } = useVideo(videoId);
 
   useEffect(() => {
     setIsVisible(!!visible);
@@ -47,8 +47,8 @@ const InfoModal: React.FC<InfoModalProps> = ({ visible, onClose }) => {
                 {data?.title}
               </p>
               <div className="flex flex-row gap-4 items-center">
-                <PlayButton movieId={data?.id} />
-                <FavoriteButton movieId={data?.id} />
+                <PlayButton videoId={data?.id} />
+                <FavoriteButton videoId={data?.id} />
               </div>
             </div>
           </div>

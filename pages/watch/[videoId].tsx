@@ -1,13 +1,13 @@
 import React from 'react';
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
 import { useRouter } from 'next/router';
-import useMovie from '@/hooks/useVideo';
+import useVideo from '@/hooks/useVideo';
 
 const Watch = () => {
   const router = useRouter();
-  const { movieId } = router.query;
+  const { videoId } = router.query;
 
-  const { data } = useMovie(movieId as string);
+  const { data } = useVideo(videoId as string);
   const isYouTube = data?.videoUrl?.includes('youtube')
   return (
     <div className="h-screen w-screen bg-black">

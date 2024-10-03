@@ -19,8 +19,8 @@ const VideoList: React.FC<VideoListProps> = ({ data, title }) => {
       <div>
         <p className="text-white text-md md:text-xl lg:text-2xl font-semibold mb-4">{title}</p>
         <div className="grid grid-cols-4 gap-2">
-          {data.map((movie) => (
-            <VideoCard key={movie.id} data={movie} />
+          {data.map((video) => (
+            <VideoCard key={video.id} data={video} />
           ))}
         </div>
       </div>
