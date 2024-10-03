@@ -12,15 +12,15 @@ export default function ContentList() {
   ]
   return (
     <ScrollArea className="h-full w-full rounded-md">
-        {contentList.map((content) => <>
-            <div id='card' className='w-full h-[190px] rounded-2xl p-4' key={content.id}>
+        {contentList.map((content) => <div key={content.id}>
+            <div id='card' className='w-full h-[190px] rounded-2xl p-4'>
                     <div className='flex w-full gap-4 h-full'>
                         <div className='bg-white w-[20%] h-full rounded-2xl'></div>
                         <div className='bg-red-200 w-[80%] h-full rounded-2xl'></div>
                     </div>
             </div>
             <Separator className="my-2" />
-            </>
+            </div>
         )}    
         
     </ScrollArea>

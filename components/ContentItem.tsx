@@ -7,6 +7,7 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { PencilSquareIcon } from "@heroicons/react/24/outline"
+import { Badge } from "./ui/badge";
 
 
 export default function ContentItem({item}: {item: {id:number}}) {
@@ -24,7 +25,7 @@ export default function ContentItem({item}: {item: {id:number}}) {
                     <div id="content-details" className="flex items-start justify-between">
                         <div id="upper-content-details" className="flex flex-col gap-2">
                             <CardTitle>Title</CardTitle>
-                            <CardDescription>Deploy your new project in one-click.</CardDescription>
+                            <CardDescription>Description</CardDescription>
                         </div>
                         <button>
                             <PencilSquareIcon className="h-6 w-6"/>
@@ -32,7 +33,7 @@ export default function ContentItem({item}: {item: {id:number}}) {
                     </div>
                     <div id="tags-list" className="flex w-full flex-wrap overflow-x-auto">
                         {tags.map((item)=> {
-                            return <div className="bg-gray-200 px-10 py-1 mr-2 mt-2 rounded-2xl">{item.name}</div>
+                            return <Badge key={item.id} className="px-2 mr-2">{item.name}</Badge>
                         })}
                     </div>
                 </div>

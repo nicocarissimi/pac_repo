@@ -16,7 +16,7 @@ function CreateContentDialog() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline" className="mr-12 rounded-2xl">
+        <Button variant="outline" className="mr-8 rounded-2xl">
             <PlusIcon className="w-6 h-6" />
         </Button>
       </DialogTrigger>
