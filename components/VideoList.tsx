@@ -9,7 +9,7 @@ interface VideoListProps {
   title: string;
 }
 
-const MovieList: React.FC<VideoListProps> = ({ data, title }) => {
+const VideoList: React.FC<VideoListProps> = ({ data, title }) => {
   if (isEmpty(data)) {
     return null;
   }
@@ -28,4 +28,4 @@ const MovieList: React.FC<VideoListProps> = ({ data, title }) => {
   );
 }
 
-export default MovieList;
+export default VideoList;
