@@ -19,7 +19,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(200).json(playlist);
     }
     else{
-      const { currentUser } = await serverAuth(req);
       const playlist = await prismadb.playlist.findMany({
         where: {
           isPublic : true

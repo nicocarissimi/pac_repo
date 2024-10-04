@@ -9,6 +9,7 @@ import useFavorites from '@/hooks/useFavorites';
 import useInfoModalStore from '@/hooks/useInfoModalStore';
 import RootLayout from '../components/layout';
 import useVideo from '@/hooks/useVideo';
+import VideoModal from '@/components/VideoModal';
 
 export async function getServerSideProps(context: NextPageContext) {
   const session = await getSession(context);

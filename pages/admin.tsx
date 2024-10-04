@@ -8,7 +8,6 @@ import Image from "next/image"
     MoreHorizontal,
     PlusCircle,
   } from "lucide-react"
-  import { Badge } from "@/components/ui/badge"
   import { Button } from "@/components/ui/button"
   import {
     Card,
@@ -43,10 +42,12 @@ import Image from "next/image"
   } from "@/components/ui/tabs"
 import { Input } from '@/components/ui/input';
 import useVideo from '@/hooks/useVideo';
+import { VideoInterface } from '@/libs/definitions';
+import VideoModal from '@/components/VideoModal';
+import useCreateEditDialog from '@/hooks/useCreateEditDialog';
 
 export async function getServerSideProps(context: NextPageContext) {
     const session = await getSession(context);
-  
     if (!session) {
       return {
         redirect: {
@@ -61,14 +62,14 @@ export async function getServerSideProps(context: NextPageContext) {
     }
   } 
     
+
   export default function AdminDashboard() {
+      const { openModal } = useCreateEditDialog();  
       const { data: videos=[] } = useVideo()
-
-      console.log(videos)
-
 
       return (
       <RootLayout >
+        <VideoModal />
         <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
           <div className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">
             <Tabs defaultValue="all">
@@ -78,29 +79,8 @@ export async function getServerSideProps(context: NextPageContext) {
                 <TabsTrigger value="active">Playlists</TabsTrigger>
                 <TabsTrigger value="draft">Users</TabsTrigger>
               </TabsList>
-                <div className="ml-auto flex items-center gap-2">
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="outline" size="sm" className="h-8 gap-1">
-                        <ListFilter className="h-3.5 w-3.5" />
-                        <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                          Filter
-                        </span>
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuLabel>Filter by</DropdownMenuLabel>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuCheckboxItem checked>
-                        Active
-                      </DropdownMenuCheckboxItem>
-                      <DropdownMenuCheckboxItem>Draft</DropdownMenuCheckboxItem>
-                      <DropdownMenuCheckboxItem>
-                        Archived
-                      </DropdownMenuCheckboxItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                  <Button size="sm" className="h-8 gap-1">
+                <div className="ml-auto">
+                  <Button size="sm" className="h-8 gap-1" variant={"secondary"} onClick={() => openModal()}>
                     <PlusCircle className="h-3.5 w-3.5" />
                     <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
                       Add Product
@@ -134,8 +114,8 @@ export async function getServerSideProps(context: NextPageContext) {
                         </TableRow>
                       </TableHeader>
                       <TableBody>
-                        { videos.map((video) => (
-                          <TableRow>
+                        { videos.map((video: VideoInterface) => (
+                          <TableRow key={video.id}>
                           <TableCell className="hidden sm:table-cell">
                             <Image
                               alt="Product image"
@@ -167,7 +147,7 @@ export async function getServerSideProps(context: NextPageContext) {
                                 </Button>
                               </DropdownMenuTrigger>
                               <DropdownMenuContent align="end">
-                                <DropdownMenuItem>Edit</DropdownMenuItem>
+                                <DropdownMenuItem onClick={()=> openModal(video)}>Edit</DropdownMenuItem>
                                 <DropdownMenuItem>Delete</DropdownMenuItem>
                               </DropdownMenuContent>
                             </DropdownMenu>

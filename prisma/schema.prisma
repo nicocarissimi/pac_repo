@@ -50,6 +50,7 @@ model Category{
   videos  VideosInCategories []
   user UsersInCategories[]
 }
+
 model Session {
   id String @id @default(auto()) @map("_id") @db.ObjectId
   sessionToken String @unique
