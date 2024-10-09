@@ -46,7 +46,7 @@ model Account {
 }
 model Category{
   id      String   @id @default(auto()) @map("_id") @db.ObjectId
-  name    String
+  name    String   @unique
   videos  VideosInCategories []
   user UsersInCategories[]
 }
@@ -72,7 +72,7 @@ model Video {
   id            String @id @default(auto()) @map("_id") @db.ObjectId
   title         String
   description   String
-  videoUrl      String
+  videoUrl      String @unique
   thumbnailUrl  String
   categories    VideosInCategories[]
   duration      String
