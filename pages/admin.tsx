@@ -4,7 +4,6 @@ import React from 'react'
 import RootLayout from '@/components/layout';
 import Image from "next/image"
   import {
-    ListFilter,
     MoreHorizontal,
     PlusCircle,
   } from "lucide-react"
@@ -19,11 +18,8 @@ import Image from "next/image"
   } from "@/components/ui/card"
   import {
     DropdownMenu,
-    DropdownMenuCheckboxItem,
     DropdownMenuContent,
     DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
     DropdownMenuTrigger,
   } from "@/components/ui/dropdown-menu"
   import {
@@ -45,6 +41,8 @@ import useVideo from '@/hooks/useVideo';
 import { VideoInterface } from '@/libs/definitions';
 import VideoModal from '@/components/VideoModal';
 import useCreateEditDialog from '@/hooks/useCreateEditDialog';
+import axios from 'axios';
+import { Badge } from '@/components/ui/badge';
 
 export async function getServerSideProps(context: NextPageContext) {
     const session = await getSession(context);
@@ -65,11 +63,16 @@ export async function getServerSideProps(context: NextPageContext) {
 
   export default function AdminDashboard() {
       const { openModal } = useCreateEditDialog();  
-      const { data: videos=[] } = useVideo()
+      const { data: videos=[], mutate } = useVideo()
+
+      const handleCreateNewVIdeo = async(value: VideoInterface) => {
+        await axios.post('/api/videos', { value })
+        mutate()
+      }
 
       return (
       <RootLayout >
-        <VideoModal />
+        <VideoModal onSubmitCallback={(value) =>handleCreateNewVIdeo(value)} />
         <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
           <div className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">
             <Tabs defaultValue="all">
@@ -106,8 +109,8 @@ export async function getServerSideProps(context: NextPageContext) {
                           </TableHead>
                           <TableHead>Title</TableHead>
                           <TableHead>Description</TableHead>
-                          <TableHead>Categories</TableHead>
                           <TableHead>Duration</TableHead>
+                          <TableHead>Categories</TableHead>
                           <TableHead>
                             <span className="sr-only">Actions</span>
                           </TableHead>
@@ -121,7 +124,7 @@ export async function getServerSideProps(context: NextPageContext) {
                               alt="Product image"
                               className="aspect-square rounded-md object-cover bg-gray-400"
                               height="100"
-                              src="/images/placeholder.jpg"
+                              src={video.thumbnailUrl}
                               width="100"
                             />
                           </TableCell>
@@ -132,7 +135,14 @@ export async function getServerSideProps(context: NextPageContext) {
                             {video.description}                          
                           </TableCell>
                           <TableCell className="hidden md:table-cell">
-                            1h
+                            {video.duration}
+                          </TableCell>
+                          <TableCell className="hidden md:table-cell">
+                            <div className='flex gap-2'>
+                              {video.categories.map(item => 
+                                    <Badge key={item.id}>{item.name}</Badge>
+                              )}
+                            </div>
                           </TableCell>
                           <TableCell>
                             <DropdownMenu>

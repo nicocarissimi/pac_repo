@@ -1,21 +1,17 @@
 export interface VideoInterface {
-    id: string
+    id?: string
     title: string;
     description: string;
     thumbnailUrl: string;
     videoUrl: string;
     duration: string;
-    categories: CategoryInterface[] | CategoryResponseInterface[]
+    categories:  CategoryInterface[]
 }
 
 export interface CategoryInterface {
+  id?: string;
   name: string;
 }
-
-export interface CategoryResponseInterface extends CategoryInterface {
-  id: string;
-}
-
 
 export function defaultVideo(): VideoInterface {
   return {
@@ -24,11 +20,11 @@ export function defaultVideo(): VideoInterface {
     description: "",
     thumbnailUrl: "",
     videoUrl: "",
-    duration: "",
+    duration: "0",
     categories: [{name:""}]
   };
 }
-  
+
 export interface PlaylistInterface {
   id: string;
   userId?: string;
