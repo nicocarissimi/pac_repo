@@ -119,6 +119,9 @@ interface MultiSelectProps
    * Optional, can be used to add custom styles.
    */
   className?: string;
+
+
+  onItemCreate?: (value: string) => void;
 }
 
 export const MultiSelect = React.forwardRef<
@@ -137,6 +140,7 @@ export const MultiSelect = React.forwardRef<
       modalPopover = false,
       asChild = false,
       className,
+      onItemCreate,
       ...props
     },
     ref
@@ -145,6 +149,7 @@ export const MultiSelect = React.forwardRef<
       React.useState<string[]>(defaultValue);
     const [isPopoverOpen, setIsPopoverOpen] = React.useState(false);
     const [isAnimating, setIsAnimating] = React.useState(false);
+    const [inputValue, setInputValue] = React.useState('');
 
     const handleInputKeyDown = (
       event: React.KeyboardEvent<HTMLInputElement>
@@ -158,6 +163,10 @@ export const MultiSelect = React.forwardRef<
         onValueChange(newSelectedValues);
       }
     };
+
+    const handleInputValue = (value: string) => {
+      setInputValue(value);
+    }
 
     const toggleOption = (option: string) => {
       const newSelectedValues = selectedValues.includes(option)
@@ -191,6 +200,12 @@ export const MultiSelect = React.forwardRef<
         onValueChange(allValues);
       }
     };
+
+    const handleItemCreate = () => {
+      if (onItemCreate) onItemCreate(inputValue)
+      setInputValue('')
+    }
+
 
     return (
       <Popover
@@ -289,12 +304,21 @@ export const MultiSelect = React.forwardRef<
         >
           <Command>
             <CommandInput
+              value={inputValue}
               placeholder="Search..."
               onKeyDown={handleInputKeyDown}
+              onValueChange={handleInputValue}
             />
           
               <CommandList>
-                <CommandEmpty>No results found.</CommandEmpty>
+                <CommandEmpty>
+                  <div className="flex flex-col gap-4">
+                    No results found.
+                    { inputValue.replaceAll(' ', '') !== '' && onItemCreate && 
+                     <Button onClick={handleItemCreate}> Add {inputValue} </Button>
+                    }
+                  </div>
+                </CommandEmpty>
                 <ScrollArea className="w-full h-40 rounded-md border">
                 <CommandGroup>
                   <CommandItem
