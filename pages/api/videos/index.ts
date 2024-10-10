@@ -48,7 +48,6 @@ async function post(req: NextApiRequest, res: NextApiResponse) {
     const selectedCategories = await fetchSelectedCategories()
 
     if (existingVideo) {
-      console.log(existingVideo)
         const oldCategories = existingVideo.categories
 
         const categoriesToRemove = oldCategories.filter((c) => 

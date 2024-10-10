@@ -12,7 +12,6 @@ const useCreateEditDialog = create<CreateEditModalInterface>((set) => ({
   video: undefined,
   isOpen: false,
   openModal: (video?: VideoInterface) => {
-    console.log(video)
     set({ isOpen: true, video })},
   closeModal: () => set({ isOpen: false, video: undefined }),
 }));

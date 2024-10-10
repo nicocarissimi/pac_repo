@@ -1,6 +1,6 @@
 import { NextPageContext } from 'next';
 import { getSession } from 'next-auth/react';
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import RootLayout from '@/components/layout';
 import Image from "next/image"
   import {
@@ -64,15 +64,25 @@ export async function getServerSideProps(context: NextPageContext) {
   export default function AdminDashboard() {
       const { openModal } = useCreateEditDialog();  
       const { data: videos=[], mutate } = useVideo()
+      const [videoList, setVideoList] = useState(videos)
+
+      useEffect(()=>{
+        setVideoList(videos)
+      },[videos])
 
       const handleCreateNewVIdeo = async(value: VideoInterface) => {
         await axios.post('/api/videos', { value })
         mutate()
       }
 
+      const handleInputSearch = (item: React.ChangeEvent<HTMLInputElement>) => {
+        setVideoList(videos.filter((video: VideoInterface) => 
+          video.title.toLowerCase().includes(item.target.value.toLowerCase())))
+      }
+
       return (
       <RootLayout >
-        <VideoModal onSubmitCallback={(value) =>handleCreateNewVIdeo(value)} />
+        <VideoModal onSubmitCallback={(value) => handleCreateNewVIdeo(value)} />
         <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
           <div className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">
             <Tabs defaultValue="all">
@@ -100,7 +110,7 @@ export async function getServerSideProps(context: NextPageContext) {
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <Input placeholder='Search content...' className='mb-2 ' />
+                    <Input placeholder='Search content...' className='mb-2 ' onChange={handleInputSearch} />
                     <Table>
                       <TableHeader>
                         <TableRow>
@@ -117,7 +127,7 @@ export async function getServerSideProps(context: NextPageContext) {
                         </TableRow>
                       </TableHeader>
                       <TableBody>
-                        { videos.map((video: VideoInterface) => (
+                        { videoList.map((video: VideoInterface) => (
                           <TableRow key={video.id}>
                           <TableCell className="hidden sm:table-cell">
                             <Image
@@ -140,7 +150,7 @@ export async function getServerSideProps(context: NextPageContext) {
                           <TableCell className="hidden md:table-cell">
                             <div className='flex gap-2'>
                               {video.categories.map(item => 
-                                    <Badge key={item.id}>{item.name}</Badge>
+                                  <Badge key={item.name}>{item.name}</Badge>
                               )}
                             </div>
                           </TableCell>
