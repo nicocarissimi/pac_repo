@@ -30,6 +30,7 @@ export interface PlaylistInterface {
   userId?: string;
   name: string;
   isPublic: boolean;
+  thumbnailUrl: string;
 }
 
 
@@ -45,4 +46,10 @@ export type ModalType = "playlist" | "video"
 export enum ModalEnum {
   PLAYLIST="playlist",
   VIDEO="video"
+}
+
+export enum TabsEnum {
+  CONTENTS='contents',
+  PLAYLISTS= 'playlists',
+  USERS= 'users'
 }

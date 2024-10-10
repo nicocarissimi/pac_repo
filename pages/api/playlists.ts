@@ -19,12 +19,24 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(200).json(playlist);
     }
     else{
-      const playlist = await prismadb.playlist.findMany({
+      const playlists = await prismadb.playlist.findMany({
         where: {
           isPublic : true
+        },
+        include: {
+          videos: {
+            include: {
+              video: {
+                select: {
+                  thumbnailUrl: true
+                }
+              }
+            }
+          }
         }
       });
-      return res.status(200).json(playlist);
+      const response = playlists.map(({videos, ...rest}) => ({...rest,  thumbnailUrl: videos[0].video.thumbnailUrl}))
+      return res.status(200).json(response);
     }
 
   } catch (error) {
