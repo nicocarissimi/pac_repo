@@ -21,6 +21,7 @@ async function get(res: NextApiResponse) {
   });
   const videosVideoInterface = videos.map(video => ({
       ...video,
+      duration: video.duration.toString(),
       categories: video.categories.map(item => ({name: item.category.name}))
   }))
 

@@ -23,7 +23,10 @@ const formSchema = z.object({
   description: z.string().min(1, {
     message: "Description must be at least 1 character."
   }),
-  duration: z.string().min(1,{ message: "Insert a valid duration"}),
+  duration: z.string()
+    .transform(value => parseInt(value))
+    .refine(value => !isNaN(value), {message: "Insert a valid number"})
+    .refine(value => value > 0, {message: "Duration must be greater than 0"}),
   videoUrl: z.string().min(1, {
     message: "videoUrl must contains a valid url"
   }),
@@ -131,9 +134,9 @@ const VideoModal = ({onSubmitCallback}: VideoModalType) => {
           name="duration"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Duration</FormLabel>
+              <FormLabel>Duration (min)</FormLabel>
               <FormControl>
-                <Input placeholder="Insert duratioon..." {...field} />
+                <Input type="number" placeholder="Insert duratioon in minutes..." {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>

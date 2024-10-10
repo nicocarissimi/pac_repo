@@ -75,7 +75,7 @@ model Video {
   videoUrl      String @unique
   thumbnailUrl  String
   categories    VideosInCategories[]
-  duration      String
+  duration      Int
   playlist      VideosInPlaylists[]
 }
 
