@@ -1,48 +1,22 @@
 import { NextPageContext } from 'next';
 import { getSession } from 'next-auth/react';
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import RootLayout from '@/components/layout';
-import Image from "next/image"
-  import {
-    MoreHorizontal,
-    PlusCircle,
-  } from "lucide-react"
-  import { Button } from "@/components/ui/button"
-  import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardFooter,
-    CardHeader,
-    CardTitle,
-  } from "@/components/ui/card"
-  import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-  } from "@/components/ui/dropdown-menu"
-  import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-  } from "@/components/ui/table"
-  import {
-    Tabs,
-    TabsContent,
-    TabsList,
-    TabsTrigger,
-  } from "@/components/ui/tabs"
-import { Input } from '@/components/ui/input';
-import useVideo from '@/hooks/useVideo';
-import { VideoInterface } from '@/libs/definitions';
-import VideoModal from '@/components/VideoModal';
+import {
+  PlusCircle,
+} from "lucide-react"
+import { Button } from "@/components/ui/button"
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/components/ui/tabs"
 import useCreateEditDialog from '@/hooks/useCreateEditDialog';
-import axios from 'axios';
-import { Badge } from '@/components/ui/badge';
+import Contents from '@/components/admin/ContentsTab';
+import PlaylistDisplay from '@/components/PlaylistDisplay';
+import Playlists from '@/components/admin/PlaylistsTab';
+import { TabsEnum } from '@/libs/definitions';
 
 export async function getServerSideProps(context: NextPageContext) {
     const session = await getSession(context);
@@ -59,41 +33,34 @@ export async function getServerSideProps(context: NextPageContext) {
       props: {}
     }
   } 
-    
 
   export default function AdminDashboard() {
-      const { openModal } = useCreateEditDialog();  
-      const { data: videos=[], mutate } = useVideo()
-      const [videoList, setVideoList] = useState(videos)
+      const { openModal: openContentsModal } = useCreateEditDialog();  
 
-      useEffect(()=>{
-        setVideoList(videos)
-      },[videos])
+      const [tabValue, setTabValue] = useState(TabsEnum.CONTENTS)
 
-      const handleCreateNewVIdeo = async(value: VideoInterface) => {
-        await axios.post('/api/videos', { value })
-        mutate()
-      }
-
-      const handleInputSearch = (item: React.ChangeEvent<HTMLInputElement>) => {
-        setVideoList(videos.filter((video: VideoInterface) => 
-          video.title.toLowerCase().includes(item.target.value.toLowerCase())))
+      const handleOpenModal = () => {
+        switch(tabValue) {
+          case TabsEnum.CONTENTS: openContentsModal()
+          // case TabsEnum.PLAYLISTS: openPlaylistModal()
+          // case TabsEnum.USERS: openUsersModal()
+          default: 
+        }
       }
 
       return (
       <RootLayout >
-        <VideoModal onSubmitCallback={(value) => handleCreateNewVIdeo(value)} />
         <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
           <div className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">
-            <Tabs defaultValue="all">
+            <Tabs value={tabValue}>
               <div className="flex items-center">
               <TabsList>
-                <TabsTrigger value="all">Contents</TabsTrigger>
-                <TabsTrigger value="active">Playlists</TabsTrigger>
-                <TabsTrigger value="draft">Users</TabsTrigger>
+                <TabsTrigger value="contents" onClick={()=>setTabValue(TabsEnum.CONTENTS)}>Contents</TabsTrigger>
+                <TabsTrigger value="playlists" onClick={()=>setTabValue(TabsEnum.PLAYLISTS)}>Playlists</TabsTrigger>
+                <TabsTrigger value="users" onClick={()=>setTabValue(TabsEnum.USERS)}>Users</TabsTrigger>
               </TabsList>
                 <div className="ml-auto">
-                  <Button size="sm" className="h-8 gap-1" variant={"secondary"} onClick={() => openModal()}>
+                  <Button size="sm" className="h-8 gap-1" variant={"secondary"} onClick={() => handleOpenModal()}>
                     <PlusCircle className="h-3.5 w-3.5" />
                     <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
                       Add Product
@@ -101,89 +68,14 @@ export async function getServerSideProps(context: NextPageContext) {
                   </Button>
                 </div>
               </div>
-              <TabsContent value="all">
-                <Card x-chunk="dashboard-06-chunk-0">
-                  <CardHeader>
-                    <CardTitle>Contents</CardTitle>
-                    <CardDescription>
-                      Manage all contents within action sphere
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <Input placeholder='Search content...' className='mb-2 ' onChange={handleInputSearch} />
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead className="hidden w-[100px] sm:table-cell">
-                            <span className="sr-only">Image</span>
-                          </TableHead>
-                          <TableHead>Title</TableHead>
-                          <TableHead>Description</TableHead>
-                          <TableHead>Duration</TableHead>
-                          <TableHead>Categories</TableHead>
-                          <TableHead>
-                            <span className="sr-only">Actions</span>
-                          </TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        { videoList.map((video: VideoInterface) => (
-                          <TableRow key={video.id}>
-                          <TableCell className="hidden sm:table-cell">
-                            <Image
-                              alt="Product image"
-                              className="aspect-square rounded-md object-cover bg-gray-400"
-                              height="100"
-                              src={video.thumbnailUrl}
-                              width="100"
-                            />
-                          </TableCell>
-                          <TableCell className="font-medium">
-                            {video.title}
-                          </TableCell>
-                          <TableCell className="font-medium w-80">
-                            {video.description}                          
-                          </TableCell>
-                          <TableCell className="hidden md:table-cell">
-                            {video.duration}
-                          </TableCell>
-                          <TableCell className="hidden md:table-cell">
-                            <div className='flex gap-2'>
-                              {video.categories.map(item => 
-                                  <Badge key={item.name}>{item.name}</Badge>
-                              )}
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            <DropdownMenu>
-                              <DropdownMenuTrigger asChild>
-                                <Button
-                                  aria-haspopup="true"
-                                  size="icon"
-                                  variant="ghost"
-                                >
-                                  <MoreHorizontal className="h-4 w-4" />
-                                  <span className="sr-only">Toggle menu</span>
-                                </Button>
-                              </DropdownMenuTrigger>
-                              <DropdownMenuContent align="end">
-                                <DropdownMenuItem onClick={()=> openModal(video)}>Edit</DropdownMenuItem>
-                                <DropdownMenuItem>Delete</DropdownMenuItem>
-                              </DropdownMenuContent>
-                            </DropdownMenu>
-                          </TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </CardContent>
-                  <CardFooter>
-                    <div className="text-xs text-muted-foreground">
-                      Showing <strong>1-10</strong> of <strong>32</strong>{" "}
-                      products
-                    </div>
-                  </CardFooter>
-                </Card>
+              <TabsContent value="contents">
+                  <Contents />
+              </TabsContent>
+              <TabsContent value='playlists'>
+                  <Playlists />;
+             </TabsContent>
+              <TabsContent value='users'>
+                  <div className='text-red-500 2xl'>Ciaone</div>
               </TabsContent>
             </Tabs>
           </div>
