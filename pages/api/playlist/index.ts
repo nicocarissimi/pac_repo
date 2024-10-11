@@ -12,8 +12,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
     const { currentUser } = await serverAuth(req);
     if (req.method === 'GET') {
-      console.log(req.query)
-  
+
       if(!req.query.hot){
         // Video is already in the user's playlist
         if(req.query.videoId){
@@ -33,9 +32,21 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           const playlist = await prismadb.playlist.findMany({
             where: {
               userId: currentUser.id
+            },
+            include: {
+              videos: {
+                include: {
+                  video: {
+                    select: {
+                      thumbnailUrl: true
+                    }
+                  }
+                }
+              }
             }
           });
-          return res.status(200).json(playlist);
+          const response = playlist.map(({videos, ...rest}) => ({...rest,  thumbnailUrl: videos[0].video.thumbnailUrl}))
+          return res.status(200).json(response);
         }
       }
       else{

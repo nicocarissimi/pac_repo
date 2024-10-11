@@ -20,6 +20,7 @@ import axios from 'axios';
 import usePlaylist from '@/hooks/usePlaylist';
 import CheckIcon from '@heroicons/react/24/solid/CheckIcon';
 import { Button } from './ui/button';
+import Image from "next/image"
 interface PlaylistDisplayProps {
   myPlaylists: boolean;
   showControls?: boolean;
@@ -135,7 +136,20 @@ const PlaylistDisplay: React.FC<PlaylistDisplayProps> = ({ myPlaylists, showCont
                   }
                 }}
               >
-                <div className="flex-1 my-2">{playlist.name}</div>
+                <div className="flex my-2 justify-start">
+                  {playlist.thumbnailUrl &&(
+                    <Image
+                    alt="Product image"
+                    className="aspect-square rounded-md object-cover bg-gray-400"
+                    height="100"
+                    src={playlist.thumbnailUrl}
+                    width="100"
+                  />
+                  )}
+                  </div>
+                <div className='flex-1 my-2'>
+                  {playlist.name}
+                </div>
                 {(selectedPlaylist.id === playlist.id && !showControls) && (<CheckIcon className="w-5 h-5" />)}
                 {(myPlaylists && showControls) && (
                   //Dropdown Menu for Playlist Actions
