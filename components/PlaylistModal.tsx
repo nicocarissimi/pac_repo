@@ -3,6 +3,11 @@ import ToggleSwitch from '@/components/ToggleSwitch';
 import { useSWRConfig } from 'swr';
 import axios from 'axios';
 import { PlaylistInterface } from '@/libs/definitions';
+import { Dialog, DialogTrigger, DialogContent, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { Label } from '@/components/ui/label';
+import { Input } from './ui/input';
+import { Button } from './ui/button';
+import { DialogHeader, DialogFooter } from './ui/dialog';
 
 
 interface PlaylistModalProps {
@@ -15,14 +20,8 @@ const PlaylistModal: React.FC<PlaylistModalProps> = ({
   onClose,
 }) => {
   const {mutate} = useSWRConfig();
-  const [playlistName, setPlaylistName] = useState('');
+  const [playlistName, setPlaylistName] = useState(playlist? playlist.name : ''  );
   const [isPublic, setIsPublic] = useState(playlist? playlist.isPublic : true);
-  useEffect(() => {
-    if (playlist) {
-      setPlaylistName(playlist.name);
-      setIsPublic(playlist.isPublic);
-    }
-  }, [playlist])
 
   const onSave = useCallback(async() =>{
     const Playlist = {
@@ -34,55 +33,66 @@ const PlaylistModal: React.FC<PlaylistModalProps> = ({
       if(!playlist){
         await axios.post('/api/playlist', {
           Playlist
+        }).then((response) => {
+        console.log('New Playlist:', Playlist);
         });
       }else{
         console.log("Updating playlist:", Playlist);
         await axios.put('/api/playlist', {
           Playlist
-        });
+        }).then((response) => {
+          console.log('Updated Playlist:', Playlist);
+          });;
       }
     }
       catch (error) {
         console.log(error);
     }
     // Here you would typically update the playlist state or make an API call to save the playlist
-    console.log('New Playlist:', Playlist);
+    mutate('/api/playlist');
     onClose();
-    mutate('/api/playlists');
-    mutate('/api/playlists?hot=1');
   }, [playlistName, isPublic, playlist]);
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-      <div className="bg-black p-8 rounded-lg w-[500px]">
-        <h2 className="text-white text-2xl mb-4">{playlist? 'Edit Playlist': 'Create Playlist'}</h2>
-        <div className="mb-4">
-          <label className="block text-white">Playlist Name</label>
-          <input
-            type="text"
-            value={playlistName}
-            onChange={(e) => setPlaylistName(e.target.value)}
-            className="w-full p-2 border border-gray-300 rounded mt-1"
-            placeholder="Enter playlist name"
-          />
-        </div>
-        <div className="mb-4">
-          <ToggleSwitch
+    <Dialog defaultOpen>
+      <DialogContent className="bg-primary" onInteractOutside={(e) => {
+          e.preventDefault();}}>
+        <DialogHeader className='text-white'>
+          <DialogTitle>{playlist? 'Edit Playlist': 'Create Playlist'}</DialogTitle>
+          <DialogDescription>
+            Enter a name for your new playlist and choose if it should be public or private.
+          </DialogDescription>
+        </DialogHeader>
+        <div className="grid gap-4 py-4 text-white">
+          <div className="grid items-center grid-cols-4 gap-4 ">
+            <Label htmlFor="name" className="text-right text-base font-semibold">
+              Playlist Name
+            </Label>
+            <Input id="name" placeholder="My Playlist" value={playlistName} className="col-span-3 bg-zinc-800 border-0" onChange={(e) => setPlaylistName(e.target.value)}/>
+          </div>
+          <div className="grid items-center grid-cols-4 gap-4">
+            <Label htmlFor="visibility" className="text-right text-base font-semibold">
+              Visibility
+            </Label>
+            <div className="col-span-3 flex items-center space-x-2">
+            <ToggleSwitch
             option1="Public"
             option2="Private"
             boolFlag={isPublic}
             setBool={setIsPublic}
           />
+            </div>
+          </div>
         </div>
-        <div className="flex justify-end gap-4">
-          <button className="bg-gray-500 text-white px-4 py-2 rounded" onClick={onClose}>
+        <DialogFooter>
+          <Button variant="outline" className="mr-2 bg-black text-base text-white border-0 font-semibold" onClick={onClose}>
             Cancel
-          </button>
-          <button className="bg-blue-500 text-white px-4 py-2 rounded" onClick={onSave}>
-            Save
-          </button>
-        </div>
-      </div>
-    </div>
+          </Button>
+          <Button type="submit" className='bg-white hover:bg-zinc-400 text-black text-base font-semibold' onClick={onSave}>Save</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+
+    
   );
 };
 

@@ -1,11 +1,12 @@
 import React, { useCallback } from 'react';
 import { useRouter } from 'next/router';
 import { ChevronDownIcon } from '@heroicons/react/24/outline';
-import { PlayIcon } from '@heroicons/react/24/solid';
+import { PlayIcon,PlusIcon } from '@heroicons/react/24/solid';
 
 import FavoriteButton from '@/components/FavoriteButton';
 import useInfoModalStore from '@/hooks/useInfoModalStore';
 import { VideoInterface } from '@/libs/definitions';
+import usePlaylistModalStore from '@/hooks/usePlaylistModalStore';
 
 interface VideoCardProps {
   data: VideoInterface;
@@ -14,6 +15,7 @@ interface VideoCardProps {
 const VideoCard: React.FC<VideoCardProps> = ({ data }) => {
   const router = useRouter();
   const { openModal } = useInfoModalStore();
+  const { openPlaylistModal } = usePlaylistModalStore();
 
   const redirectToWatch = useCallback(() => router.push(`/watch/${data.id}`), [router, data.id]);
 
@@ -74,8 +76,10 @@ const VideoCard: React.FC<VideoCardProps> = ({ data }) => {
             <div onClick={redirectToWatch} className="cursor-pointer w-6 h-6 lg:w-10 lg:h-10 bg-white rounded-full flex justify-center items-center transition hover:bg-neutral-300">
               <PlayIcon className="text-black w-4 lg:w-6" />
             </div>
-            <FavoriteButton videoId={data.id} />
-            <div onClick={() => openModal(data?.id)} className="cursor-pointer ml-auto group/item w-6 h-6 lg:w-10 lg:h-10 border-white border-2 rounded-full flex justify-center items-center transition hover:border-neutral-300">
+            <div onClick={() => openPlaylistModal(data?.id!)} className="cursor-pointer group/item w-6 h-6 lg:w-10 lg:h-10 border-white border-2 rounded-full flex justify-center items-center transition hover:border-neutral-300">
+              <PlusIcon className="text-white group-hover/item:text-neutral-300 w-4 lg:w-6"/>
+            </div>
+            <div onClick={() => openModal(data?.id!)} className="cursor-pointer ml-auto group/item w-6 h-6 lg:w-10 lg:h-10 border-white border-2 rounded-full flex justify-center items-center transition hover:border-neutral-300">
               <ChevronDownIcon className="text-white group-hover/item:text-neutral-300 w-4 lg:w-6" />
             </div>
           </div>
@@ -86,7 +90,7 @@ const VideoCard: React.FC<VideoCardProps> = ({ data }) => {
             <p className="text-white text-[10px] lg:text-sm">{data.duration}</p>
           </div>
           <div className="flex flex-row items-center gap-2 mt-4 text-[8px] text-white lg:text-sm">
-            <p>{data.genre}</p>
+            <p>CATEGORIE</p>
           </div>
         </div>
       </div>

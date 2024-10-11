@@ -10,6 +10,7 @@ import useInfoModalStore from '@/hooks/useInfoModalStore';
 import RootLayout from '../components/layout';
 import useVideo from '@/hooks/useVideo';
 import VideoModal from '@/components/VideoModal';
+import PlaylistContentModal from '@/components/PlaylistContentModal';
 
 export async function getServerSideProps(context: NextPageContext) {
   const session = await getSession(context);
@@ -46,6 +47,7 @@ const Home = () => {
   return (
     <RootLayout>
         <InfoModal visible={isOpen} onClose={closeModal} />
+        <PlaylistContentModal />
         <Billboard />
         <div ref={targetRef} className="pb-40">
           <VideoList title="Trending Now" data={videos} />

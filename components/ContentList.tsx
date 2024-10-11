@@ -1,28 +1,109 @@
-import React from 'react'
+import React, { useEffect } from 'react'
+import { VideoInterface } from '@/libs/definitions';
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Separator } from '@/components/ui/separator'
+import usePlaylistContent from '@/hooks/usePlaylistContent';
+import { AlertDialog, AlertDialogContent, AlertDialogTitle, AlertDialogDescription, AlertDialogCancel, AlertDialogAction } from '@radix-ui/react-alert-dialog';
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from './ui/dropdown-menu';
+import { Ellipsis, Edit, Trash, Plus } from 'lucide-react';
+import { AlertDialogHeader, AlertDialogFooter } from './ui/alert-dialog';
+import usePlaylistModalStore from '@/hooks/usePlaylistModalStore';
+import axios from 'axios';
+import { useSWRConfig } from 'swr';
 
-export default function ContentList() {
+interface ContentListProps {
+  playlistId: string;
+}
 
-  const contentList = [
-    {id:'1', image: '1', name: 'Primo content'},
-    {id:'2',image: '2', name: 'Secondo content'},
-    {id:'3',image: '3', name: 'Terzo content'},
-    {id:'4',image: '3', name: 'Terzo content'},
-  ]
+const ContentList: React.FC<ContentListProps> = ({ playlistId }) => {
+
+  const { mutate } = useSWRConfig()
+  const { openPlaylistModal } = usePlaylistModalStore();
+  const { data: videoList = [] } = usePlaylistContent(playlistId) as { data: VideoInterface[] };
+  const deleteVideoFromPlaylist = async(video: VideoInterface) =>{
+    if(video?.id){
+      const videoId = video.id;
+      console.log(videoId);
+      try {
+        await axios.delete(`/api/playlist/${playlistId}`, {
+          data: { videoId }
+        }).then(() => {
+          mutate(`/api/playlist/${playlistId}`);
+        });
+          } catch (error) {
+            if (axios.isAxiosError(error)) {
+              if (error.response && error.response.status === 409) {
+                console.error('Video is already in the playlist');
+                alert('This video is already in the playlist');
+              } else {
+                console.error('An error occurred while adding the video to the playlist:', error);
+                alert('Error adding the video to the playlist');
+              }
+            } else {
+              // Handle non-Axios errors
+              console.error('An unknown error occurred:', error);
+              alert('An unknown error occurred');
+            }
+          }
+      }
+    };
+
   return (
     <ScrollArea className="h-full w-full rounded-md">
-        {contentList.map((content) => <div key={content.id}>
-            <div id='card' className='w-full h-[190px] rounded-2xl p-4'>
-                    <div className='flex w-full gap-4 h-full'>
-                        <div className='bg-white w-[20%] h-full rounded-2xl'></div>
-                        <div className='bg-red-200 w-[80%] h-full rounded-2xl'></div>
-                    </div>
+      {videoList.map((video) => (
+        <div key={video?.id}>
+          <div id="card" className="w-full h-auto rounded-2xl p-4 mb-4 bg-zinc-800 text-white relative">
+            <div className="flex justify-between items-center">
+
+              {/* Video Thumbnail and Info */}
+              <div className="flex w-full gap-4 h-full mt-2">
+                {/* Video Thumbnail */}
+                <div className="w-[20%] h-[200px] bg-cover bg-center rounded-2xl" style={{ backgroundImage: `url(${video.thumbnailUrl})` }}></div>
+
+                {/* Video Info */}
+                <div className="w-[70%] h-full flex flex-col justify-between">
+                  <div className="text-lg font-bold text-white">{video.title}</div>
+                  <div className="text-gray-400 text-sm">Duration: {video.duration}</div>
+                  <div className="text-gray-300 text-sm">{video.description.substring(0, 100)}...</div>
+                  <a
+                    href={video.videoUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-400 underline text-sm"
+                  >
+                    Watch Video
+                  </a>
+                </div>
+              </div>
+              <DropdownMenu modal={false}>
+                <DropdownMenuTrigger className="flex flex-row">
+                  {/* Ellipsis icon */}
+                  <Ellipsis size={"24px"} className="rotate-90" />
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56 bg-white text-black " align="end">
+                  <div className="relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors focus:bg-acc focus:text-accent-foreground hover:rounded-none hover:bg-zinc-100">
+                    <Plus className="mr-2 h-4 w-4" />
+                    <span onClick={() => openPlaylistModal(video.id!)}>Add to other playlist</span>
+                  </div>
+                  <DropdownMenuItem asChild>
+                      <div className="relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors focus:bg-acc focus:text-accent-foreground hover:rounded-none hover:bg-zinc-100">
+                        <Trash className="mr-2 h-4 w-4" />
+                        <span onClick={()=>deleteVideoFromPlaylist(video)}>Delete from playlist</span>
+                      </div>
+                  
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
-            <Separator className="my-2" />
             </div>
-        )}    
-        
+
+          <Separator className="my-2" />
+        </div>
+      ))
+      }
+
     </ScrollArea>
   )
 }
+
+export default ContentList;

@@ -9,6 +9,7 @@ import { useSWRConfig } from 'swr';
 import { ScrollArea } from "@/components/ui/scroll-area"
 import PlaylistDisplay from '@/components/PlaylistDisplay';
 import PlaylistModal from '@/components/PlaylistModal';
+import PlaylistContentModal from '@/components/PlaylistContentModal';
 
 
 
@@ -32,24 +33,15 @@ export async function getServerSideProps(context: NextPageContext) {
 // useState -> useEffect chiama usePlaylist
 
 const PlaylistPage = () => {
-  const { mutate } = useSWRConfig()
-  const { data: userPlaylist = [] } = usePlaylist();
-  const { data: hotPlaylist=[]} = usePlaylist(true);
-  const [playlistName, setPlaylistName] = useState('');
-  const [isPublic, setIsPublic] = useState(true);
   const [myPlaylists, setMyPlaylists] = useState(true)
   const [showModal, setShowModal] = useState(false);
-
-  const handleAddPlaylist = () => {
-    setShowModal(true);
+  const [playlistId, setPlaylistId] = useState('');
+  const toggleAddPlaylist = () => {
+    setShowModal(s=>!s);
   };
-
-  const handleCloseModal = () => {
-    setShowModal(false);
-  };
-
   return (
     <RootLayout>
+      <PlaylistContentModal />
       <div className='flex w-full h-[90%] absolute justify-around gap-2 p-2'>
           <div className='flex flex-col h-full justify-between w-[40%]'>
             <div className='rounded-xl p-8 bg-zinc-900 h-full '>
@@ -62,7 +54,7 @@ const PlaylistPage = () => {
             </div>
             
             <div className='block mr-8'>
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className='h-full hover:rounded-full hover:bg-zinc-800' onClick={handleAddPlaylist}>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className='h-full hover:rounded-full hover:bg-zinc-800' onClick={toggleAddPlaylist}>
             <path d="M12 4.5v15m7.5-7.5h-15" />
             </svg>
             </div>
@@ -85,12 +77,12 @@ const PlaylistPage = () => {
               <path d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
               </svg>
             </div>
-            <ScrollArea className=' mt-5 h-[90%]'>
+            
             <PlaylistDisplay
-                playlists={myPlaylists ? userPlaylist : hotPlaylist}
                 myPlaylists={myPlaylists}
+                showControls={true}
+                setPlaylistId={setPlaylistId}
               />
-              </ScrollArea>
             </div>
           </div>
         </div>
@@ -106,12 +98,14 @@ const PlaylistPage = () => {
               </svg>
             </div>
           
-          <ContentList />
+          <ContentList
+          playlistId={playlistId}
+          />
         </div>
       </div>
       {showModal && (
         <PlaylistModal
-          onClose={handleCloseModal}
+          onClose={toggleAddPlaylist}
         />
       )}
     </RootLayout>

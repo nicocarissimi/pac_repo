@@ -2,41 +2,88 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import prismadb from '@/libs/prismadb';
 
 import { getSession } from "next-auth/react";
+import serverAuth from '@/libs/serverAuth';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
 
   try {
-    if (req.method !== 'POST' && req.method !== 'PUT') {  
+    if (req.method !== 'POST' && req.method !== 'PUT' && req.method !== 'GET') {  
         return res.status(405).end();
     }
-    const session = await getSession({ req });
-    console.log(req.body);
+    const { currentUser } = await serverAuth(req);
+    if (req.method === 'GET') {
+      console.log(req.query)
+  
+      if(!req.query.hot){
+        // Video is already in the user's playlist
+        if(req.query.videoId){
+          const playlist = await prismadb.playlist.findMany({
+            where: {
+              userId: currentUser.id,
+              videos: {
+                none:{
+                  videoId: req.query.videoId as string
+                }
+              }
+            }
+          });
+          return res.status(200).json(playlist);
+        }
+        else{
+          const playlist = await prismadb.playlist.findMany({
+            where: {
+              userId: currentUser.id
+            }
+          });
+          return res.status(200).json(playlist);
+        }
+      }
+      else{
+        const playlists = await prismadb.playlist.findMany({
+          where: {
+            isPublic : true
+          },
+          include: {
+            videos: {
+              include: {
+                video: {
+                  select: {
+                    thumbnailUrl: true
+                  }
+                }
+              }
+            }
+          }
+        });
+        const response = playlists.map(({videos, ...rest}) => ({...rest,  thumbnailUrl: videos[0].video.thumbnailUrl}))
+        return res.status(200).json(response);
+      }
+    }
     const {Playlist} = req.body;
-    if (!session?.user?.email) {
+    if (!currentUser) {
       throw new Error('Not signed in');
     }
-    const user = await prismadb.user.findUnique({
-      where: {
-        email: session.user.email,
+    try{
+    if (!Playlist.id) {
+    const newPlaylist = await prismadb.playlist.create({
+      data: {
+        name: Playlist.name,
+        userId: currentUser.id,
+        isPublic: Playlist.isPublic
       },
     });
-
-    if (!user) {
-      throw new Error('Invalid email');
+    res.status(201).json(newPlaylist);
     }
-    if (!Playlist.id) {
-    console.log('No ID provided');
-    }
-    try {
-      const newPlaylist = await prismadb.playlist.upsert({
+    else if (req.method === 'PUT') {
+      const newPlaylist = await prismadb.playlist.update({
         where: { id: Playlist.id },
-        update: { name: Playlist.name, userId: user.id, isPublic: Playlist.isPublic },
-        create: { name: Playlist.name, userId: user.id, isPublic: Playlist.isPublic },
+        data: { name: Playlist.name, userId: currentUser.id, isPublic: Playlist.isPublic },
       });
       res.status(201).json(newPlaylist);
+    }
     } catch (error) {
       console.error(error);
-      res.status(500).json({ error: 'Error creating playlist' });
+      res.status(500).json({ error: 'Error creating or updating playlist' });
   }
   } catch(error){
     console.log(error);

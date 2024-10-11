@@ -1,25 +1,26 @@
-import React, {useState} from 'react';
+import React, {useCallback, useState} from 'react';
 
 interface ToggleProps {
   onChange?: any;
   option1: string;
   option2: string;
   boolFlag: boolean;
-  setBool: any 
+  setBool: React.Dispatch<React.SetStateAction<boolean>> | any 
 }
 
  const ToggleSwitch: React.FC<ToggleProps> = ({ onChange, option1, option2, boolFlag, setBool}) =>{
   const [isActive, setIsActive] = useState(boolFlag);
 
-  const handleToggle = () => {
+  const handleToggle = useCallback(() => {
     console.log(boolFlag)
     if(boolFlag !== null){
+      setIsActive(s=>!s)
       setBool(!boolFlag)
-      setIsActive(!isActive)
       return
     }
     setIsActive(!isActive)
-  };
+    
+  },[boolFlag]);
 
   return (
     <div className="flex justify-between items-center w-full">
