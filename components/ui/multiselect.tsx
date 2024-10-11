@@ -202,7 +202,9 @@ export const MultiSelect = React.forwardRef<
     };
 
     const handleItemCreate = () => {
-      if (onItemCreate) onItemCreate(inputValue)
+      if (onItemCreate) {
+        onItemCreate(inputValue)
+      }
       setInputValue('')
     }
 

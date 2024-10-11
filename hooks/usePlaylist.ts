@@ -1,7 +1,7 @@
 import useSwr from 'swr'
 import fetcher from '@/libs/fetcher';
 
-const usePlaylist = (personalPlaylist: boolean, videoId?:string) => {
+const usePlaylist = (personalPlaylist: boolean, videoId?:string | undefined) => {
   let apiUrl = personalPlaylist ? '/api/playlist' : '/api/playlist?hot=1';
   
   // If videoId is provided, add it to the query string to exclude playlists that already contain the video

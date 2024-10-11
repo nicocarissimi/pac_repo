@@ -88,7 +88,9 @@ const VideoModal = ({onSubmitCallback}: VideoModalType) => {
 
 
   async function onSubmit(value: z.infer<typeof formSchema>) {
-    if(onSubmitCallback) onSubmitCallback(value)
+    if(onSubmitCallback){
+      onSubmitCallback(value)
+    } 
     closeModal()
   }
 

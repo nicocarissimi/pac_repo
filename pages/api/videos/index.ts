@@ -117,11 +117,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       console.log(error)
     }
 
-    if (req.method == 'POST') {
+    if (req.method === 'POST') {
       return post(req, res)
     }
 
-    if (req.method == 'GET' ) {
+    if (req.method === 'GET' ) {
       return get(res)
     }
 

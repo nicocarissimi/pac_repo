@@ -35,7 +35,7 @@ const PlaylistDisplay: React.FC<PlaylistDisplayProps> = ({ myPlaylists, showCont
   const [showModal, setShowModal] = useState(false);
   const [playlistName, setPlaylistName] = useState('');
   const [isPublic, setIsPublic] = useState(true);
-  const { data: playlist = [] } = videoId? usePlaylist(myPlaylists, videoId) as { data: PlaylistInterface[] }: usePlaylist(myPlaylists) as { data: PlaylistInterface[] };
+  const { data: playlist = [] } = usePlaylist(myPlaylists, videoId) as { data: PlaylistInterface[] };
   const [ selectedPlaylist, setSelectPlaylist ] = useState({} as PlaylistInterface);
 
   useEffect(() => {
