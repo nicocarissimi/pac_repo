@@ -10,23 +10,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
-  name String
-  image String?
-  email String? @unique
-  emailVerified DateTime?
-  hashedPassword String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  sessions Session[]
-  accounts Account[]
-  favoriteIds String[] @db.ObjectId
-  playlists  Playlist[]
-  favoriteCategories UsersInCategories[]
-  role String
-}
-
 model Account {
   id String @id @default(auto()) @map("_id") @db.ObjectId
   userId             String   @db.ObjectId
@@ -44,19 +27,12 @@ model Account {
 
   @@unique([provider, providerAccountId])
 }
+
 model Category{
   id      String   @id @default(auto()) @map("_id") @db.ObjectId
   name    String   @unique
   videos  VideosInCategories []
   user UsersInCategories[]
-}
-
-model Session {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
-  sessionToken String @unique
-  userId String @db.ObjectId
-  expires DateTime
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model VerificationToken {
@@ -79,10 +55,26 @@ model Video {
   playlist      VideosInPlaylists[]
 }
 
+model User {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  name String
+  image String?
+  email String? @unique
+  hashedPassword String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  playlists  Playlist[]
+  favoriteCategories UsersInCategories[]
+  emailVerified DateTime?
+  accounts Account[]
+  role String
+}
+
+
 model Playlist {
   id      String   @id @default(auto()) @map("_id") @db.ObjectId
   userId  String   @db.ObjectId
-  user    User     @relation(fields: [userId], references: [id])
+  owner    User     @relation(fields: [userId], references: [id])
   name    String
   videos  VideosInPlaylists[]
   isPublic Boolean

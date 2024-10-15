@@ -2,6 +2,9 @@ import bcrypt from 'bcrypt';
 import { NextApiRequest, NextApiResponse } from 'next';
 import prismadb from '@/libs/prismadb';
 import { Role } from '@/libs/definitions';
+import fs from 'fs'
+import path from 'path';
+
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
@@ -23,13 +26,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     const hashedPassword = await bcrypt.hash(password, 12);
 
+    const imageStaticPath = '/images/user/';
+    const imageDir = path.join(process.cwd(), 'public', 'images', 'user');
+    const images = fs.readdirSync(imageDir);
+
+    const imgSrc = images[Math.floor(Math.random() * images.length)];
+
+
+
     const user = await prismadb.user.create({
       data: {
         email,
         name,
         hashedPassword,
-        image: '',
-        emailVerified: new Date(),
+        image: imageStaticPath + imgSrc,
         role: Role.USER
       }
     })

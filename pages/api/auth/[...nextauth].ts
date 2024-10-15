@@ -1,10 +1,11 @@
-import NextAuth, { NextAuthOptions } from 'next-auth';
+import NextAuth, { NextAuthOptions, Profile, User } from 'next-auth';
 import GithubProvider from 'next-auth/providers/github';
 import GoogleProvider from 'next-auth/providers/google';
 import Credentials from 'next-auth/providers/credentials';
 import { PrismaAdapter } from '@next-auth/prisma-adapter';
 import { compare } from 'bcrypt';
 import prismadb from '@/libs/prismadb';
+import { Account } from '@prisma/client';
 
 
 export const authOptions: NextAuthOptions = {
@@ -57,6 +58,44 @@ export const authOptions: NextAuthOptions = {
       }
     })
   ],
+  callbacks: {
+    jwt: async ({ token, user, account }) => {
+      if (user) {
+        // console.log("jwt callback", { session, token, user });
+        let dbUser = null;
+        if (account?.provider === 'github' || account?.provider === 'google' ) {
+          dbUser = await prismadb.user.findUnique({
+            where: {email: user.email}
+          });
+        }
+        token.name = user.name;
+        token.id = user.id || dbUser?.id!;
+        token.role = user.role || dbUser?.role!;
+        token.image = user.image;
+      }
+      return token;
+    },
+    session: async ({ session, token }) => {
+      if (token) {
+        session.user = {
+          ...session.user,
+          id: token.id,
+          role: token.role,
+          name: token.name,
+          email: token.email,
+          image: token.image,
+        };
+      }
+      return session;
+    },
+    async signIn({user, account, profile}: {user: User, account: Account, profile: Profile}) {
+      if (account.provider === 'google' || account.provider === 'github') {
+          user.role = 'user'; // Set a default role or customize it
+          user.image = '/images/user/default-green.png';
+      }
+      return true;
+  },
+  },
   pages: {
     signIn: '/auth'
   },
@@ -66,7 +105,7 @@ export const authOptions: NextAuthOptions = {
   jwt: {
     secret: process.env.NEXTAUTH_JWT_SECRET,
   },
-  secret: process.env.NEXTAUTH_SECRET
+  secret: process.env.NEXTAUTH_SECRET,
 }
 
 

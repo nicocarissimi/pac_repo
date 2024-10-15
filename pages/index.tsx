@@ -1,6 +1,4 @@
 import React, { useRef, useState } from 'react';
-import { NextPageContext } from 'next';
-import { getSession } from 'next-auth/react';
 
 import Billboard from '@/components/Billboard';
 import VideoList from '@/components/VideoList';
@@ -9,25 +7,24 @@ import useFavorites from '@/hooks/useFavorites';
 import useInfoModalStore from '@/hooks/useInfoModalStore';
 import RootLayout from '../components/layout';
 import useVideo from '@/hooks/useVideo';
-import VideoModal from '@/components/VideoModal';
 import PlaylistContentModal from '@/components/playlist/ContentModal';
 
-export async function getServerSideProps(context: NextPageContext) {
-  const session = await getSession(context);
+// export async function getServerSideProps(context: NextPageContext) {
+//   const session = await getSession(context);
 
-  if (!session) {
-    return {
-      redirect: {
-        destination: '/auth',
-        permanent: false,
-      }
-    }
-  }
+//   if (!session) {
+//     return {
+//       redirect: {
+//         destination: '/auth',
+//         permanent: false,
+//       }
+//     }
+//   }
 
-  return {
-    props: {}
-  }
-}
+//   return {
+//     props: {}
+//   }
+// }
 
 const Home = () => {
   const { data: videos = [] } = useVideo();

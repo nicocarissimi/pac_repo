@@ -31,6 +31,20 @@ export interface PlaylistInterface {
   name: string;
   isPublic: boolean;
   thumbnailUrl: string;
+  videos_title?: string[]
+}
+
+export interface UserInterface {
+  id: string;
+  name: string;
+  image: string;
+  email: string;
+  createdAt: string;
+  updatedAt: string;
+  favoriteIds: string;
+  playlists: string;
+  favoriteCategories: CategoryInterface[]
+  role: string
 }
 
 
