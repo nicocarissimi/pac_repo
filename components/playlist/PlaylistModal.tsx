@@ -5,9 +5,9 @@ import axios from 'axios';
 import { PlaylistInterface } from '@/libs/definitions';
 import { Dialog, DialogTrigger, DialogContent, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
-import { Input } from './ui/input';
-import { Button } from './ui/button';
-import { DialogHeader, DialogFooter } from './ui/dialog';
+import { Input } from '../ui/input';
+import { Button } from '../ui/button';
+import { DialogHeader, DialogFooter } from '../ui/dialog';
 
 
 interface PlaylistModalProps {

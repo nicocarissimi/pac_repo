@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/tabs"
 import useCreateEditDialog from '@/hooks/useCreateEditDialog';
 import Contents from '@/components/admin/ContentsTab';
-import PlaylistDisplay from '@/components/PlaylistDisplay';
+import PlaylistDisplay from '@/components/playlist/SidebarList';
 import Playlists from '@/components/admin/PlaylistsTab';
 import { TabsEnum } from '@/libs/definitions';
 

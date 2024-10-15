@@ -3,23 +3,25 @@ import { VideoInterface } from '@/libs/definitions';
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Separator } from '@/components/ui/separator'
 import usePlaylistContent from '@/hooks/usePlaylistContent';
-import { AlertDialog, AlertDialogContent, AlertDialogTitle, AlertDialogDescription, AlertDialogCancel, AlertDialogAction } from '@radix-ui/react-alert-dialog';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from './ui/dropdown-menu';
-import { Ellipsis, Edit, Trash, Plus } from 'lucide-react';
-import { AlertDialogHeader, AlertDialogFooter } from './ui/alert-dialog';
+import { Ellipsis, Trash, Plus } from 'lucide-react';
 import usePlaylistModalStore from '@/hooks/usePlaylistModalStore';
 import axios from 'axios';
 import { useSWRConfig } from 'swr';
+import { useRouter } from 'next/router';
 
 interface ContentListProps {
+  myPlaylists: boolean
   playlistId: string;
+  videoSearch?: string;
 }
 
-const ContentList: React.FC<ContentListProps> = ({ playlistId }) => {
+const ContentList: React.FC<ContentListProps> = ({ playlistId,videoSearch, myPlaylists }) => {
 
-  const { mutate } = useSWRConfig()
+  const { mutate } = useSWRConfig();
+  const router = useRouter();
   const { openPlaylistModal } = usePlaylistModalStore();
-  const { data: videoList = [] } = usePlaylistContent(playlistId) as { data: VideoInterface[] };
+  const { data: videoList = [] } = usePlaylistContent(playlistId,videoSearch) as { data: VideoInterface[] };
   const deleteVideoFromPlaylist = async(video: VideoInterface) =>{
     if(video?.id){
       const videoId = video.id;
@@ -66,6 +68,7 @@ const ContentList: React.FC<ContentListProps> = ({ playlistId }) => {
                   <div className="text-gray-400 text-sm">Duration: {video.duration}</div>
                   <div className="text-gray-300 text-sm">{video.description.substring(0, 100)}...</div>
                   <a
+                    onClick={() => router.push(`/watch/${video.id}`)}
                     href={video.videoUrl}
                     target="_blank"
                     rel="noopener noreferrer"
@@ -85,13 +88,14 @@ const ContentList: React.FC<ContentListProps> = ({ playlistId }) => {
                     <Plus className="mr-2 h-4 w-4" />
                     <span onClick={() => openPlaylistModal(video.id!)}>Add to other playlist</span>
                   </div>
-                  <DropdownMenuItem asChild>
+                  {myPlaylists && (<DropdownMenuItem asChild>
                       <div className="relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors focus:bg-acc focus:text-accent-foreground hover:rounded-none hover:bg-zinc-100">
                         <Trash className="mr-2 h-4 w-4" />
                         <span onClick={()=>deleteVideoFromPlaylist(video)}>Delete from playlist</span>
                       </div>
                   
                   </DropdownMenuItem>
+                  )}
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>

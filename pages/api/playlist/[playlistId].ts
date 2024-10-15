@@ -21,11 +21,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     if (req.method === 'GET') {
       try {
-        const { playlistId } = req.query;
+        const { playlistId,search } = req.query;
+        console.log(search)
         let playlist;
 
         // If playlistId exists in the query, find that playlist
-        if (playlistId && playlistId !== "1") {
+        if (playlistId) {
           playlist = await prismadb.playlist.findUnique({
             where: {
               id: playlistId as string,  // Ensure playlistId is used as a string
@@ -49,6 +50,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             const videos = await prismadb.videosInPlaylists.findMany({
               where: {
                 playlistId: playlist.id,
+                video:{
+                    title: search?{
+                      contains: String(search),
+                      mode: 'insensitive'
+                    }:{},
+                }
               },
               include: {
                 video: true,  // Assuming the relation to the 'videos' table is named 'video'

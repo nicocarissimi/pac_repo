@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import RootLayout from '../components/layout'
 import ContentList from '@/components/ContentList';
 import ToggleSwitch from '@/components/ToggleSwitch';
@@ -7,9 +7,11 @@ import { getSession } from 'next-auth/react';
 import usePlaylist from '@/hooks/usePlaylist';
 import { useSWRConfig } from 'swr';
 import { ScrollArea } from "@/components/ui/scroll-area"
-import PlaylistDisplay from '@/components/PlaylistDisplay';
-import PlaylistModal from '@/components/PlaylistModal';
-import PlaylistContentModal from '@/components/PlaylistContentModal';
+import SidebarList from '@/components/playlist/SidebarList';
+import PlaylistModal from '@/components/playlist/PlaylistModal';
+import PlaylistContentModal from '@/components/playlist/ContentModal';
+import { Input } from '@/components/ui/input';
+import { debounce } from 'lodash';
 
 
 
@@ -36,9 +38,29 @@ const PlaylistPage = () => {
   const [myPlaylists, setMyPlaylists] = useState(true)
   const [showModal, setShowModal] = useState(false);
   const [playlistId, setPlaylistId] = useState('');
+  const [playlistSearchValue, setPlaylistSearchValue] = useState('');
+  const [videoSearchValue, setVideoSearchValue] = useState('');
+
   const toggleAddPlaylist = () => {
     setShowModal(s=>!s);
   };
+
+  const handleChangeSearch = (value:string, id:string) =>{
+    debouncedSetSearchTerm(value,id)
+  }
+  const debouncedSetSearchTerm = useCallback(
+    debounce((value,id) => {
+      if(id==="searchVideo"){
+        setVideoSearchValue(value)
+      }
+      else{
+        setPlaylistSearchValue(value)
+        }
+      }
+      , 600),
+    []
+  );
+
   return (
     <RootLayout>
       <PlaylistContentModal />
@@ -68,30 +90,33 @@ const PlaylistPage = () => {
             
             <div className='flex flex-col h-[90%] w-full mt-10'>
             <div className="relative w-full">
-              <input
-                id="search"
-                className="bg-zinc-800 rounded-2xl p-2 pl-10 text-gray-500 placeholder:text-gray-500 w-full"
-                placeholder="search your father"
+              <Input
+                id="searchPlaylist"
+                className="bg-zinc-800 rounded-2xl p-2 pl-10 text-gray-500 placeholder:text-gray-500 w-full focus-visible:ring-0 focus-visible:ring-black focus-visible:ring-offset-0 border-transparent"
+                placeholder="Search playlist.."
+                onChange={(e) => handleChangeSearch(e.target.value, e.target.id)}
+
               />
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="absolute left-3 top-2 w-6 h-6 text-gray-500">
               <path d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
               </svg>
             </div>
             
-            <PlaylistDisplay
+            <SidebarList
                 myPlaylists={myPlaylists}
-                showControls={true}
                 setPlaylistId={setPlaylistId}
+                playlistSearch={playlistSearchValue}
               />
             </div>
           </div>
         </div>
         <div className='rounded-xl p-8 w-[100%] bg-zinc-900 flex flex-col gap-6'>
           <div className="relative w-full">
-              <input
-                id="search"
-                className="bg-zinc-800 rounded-2xl p-2 pl-10 text-gray-500 placeholder:text-gray-500 w-full"
-                placeholder="search your father"
+              <Input
+                id="searchVideo"
+                className="bg-zinc-800 rounded-2xl p-2 pl-10 text-gray-500 placeholder:text-gray-500 w-full focus-visible:ring-0 focus-visible:ring-black focus-visible:ring-offset-0 border-transparent"
+                placeholder="Search for content"
+                onChange={(e) => handleChangeSearch(e.target.value,e.target.id)}
               />
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="absolute left-3 top-2 w-6 h-6 text-gray-500">
               <path d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
@@ -99,7 +124,9 @@ const PlaylistPage = () => {
             </div>
           
           <ContentList
+          myPlaylists={myPlaylists}
           playlistId={playlistId}
+          videoSearch={videoSearchValue}
           />
         </div>
       </div>

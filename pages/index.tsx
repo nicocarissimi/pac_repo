@@ -10,7 +10,7 @@ import useInfoModalStore from '@/hooks/useInfoModalStore';
 import RootLayout from '../components/layout';
 import useVideo from '@/hooks/useVideo';
 import VideoModal from '@/components/VideoModal';
-import PlaylistContentModal from '@/components/PlaylistContentModal';
+import PlaylistContentModal from '@/components/playlist/ContentModal';
 
 export async function getServerSideProps(context: NextPageContext) {
   const session = await getSession(context);

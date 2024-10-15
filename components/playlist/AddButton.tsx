@@ -5,7 +5,7 @@ import { PlusIcon } from '@heroicons/react/24/outline';
 import useCurrentUser from '@/hooks/useCurrentUser';
 import useFavorites from '@/hooks/useFavorites';
 import PlaylistModal from './PlaylistModal';
-import PlaylistDisplay from './PlaylistDisplay';
+import PlaylistDisplay from './SidebarList';
 
 interface FavoriteButtonProps {
   movieId: string
@@ -27,7 +27,7 @@ const FavoriteButton: React.FC<FavoriteButtonProps> = ({ movieId }) => {
     </div>
     {showModal && (
         
-        <PlaylistDisplay
+        <
               myPlaylists={true} 
               showControls={false}        
         />

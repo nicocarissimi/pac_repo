@@ -12,12 +12,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
     const { currentUser } = await serverAuth(req);
     if (req.method === 'GET') {
-
+      const searchValue = req.query.search
+      console.log(req.query)
       if(!req.query.hot){
         // Video is already in the user's playlist
         if(req.query.videoId){
           const playlist = await prismadb.playlist.findMany({
             where: {
+              name: searchValue? {contains: String(searchValue)} : {},
               userId: currentUser.id,
               videos: {
                 none:{
@@ -31,6 +33,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         else{
           const playlist = await prismadb.playlist.findMany({
             where: {
+              name: searchValue? {contains: String(searchValue), mode: 'insensitive'} : {},
               userId: currentUser.id
             },
             include: {
@@ -52,6 +55,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       else{
         const playlists = await prismadb.playlist.findMany({
           where: {
+            name: searchValue? {contains: String(searchValue), mode: 'insensitive'} : {},
             isPublic : true
           },
           include: {

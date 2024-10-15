@@ -1,12 +1,9 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback } from 'react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 
-import PlayButton from '@/components/PlayButton';
-import FavoriteButton from '@/components/FavoriteButton';
-import useInfoModalStore from '@/hooks/useInfoModalStore';
-import useVideo from '@/hooks/useVideo';
+
 import usePlaylistModalStore from '@/hooks/usePlaylistModalStore';
-import PlaylistDisplay from './PlaylistDisplay';
+import AddVideoPlaylist from './AddVideoPlaylist';
 
 const PlaylistContentModal = () => {
   
@@ -34,7 +31,7 @@ const PlaylistContentModal = () => {
             </div>
             
         </div>
-        <PlaylistDisplay myPlaylists={true} videoId={videoId} closePlaylistModal={closePlaylistModal}/>
+        <AddVideoPlaylist videoId={videoId!} closePlaylistModal={closePlaylistModal}/>
         </div>
       </div>
     </div>
