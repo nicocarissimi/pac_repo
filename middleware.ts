@@ -1,22 +1,30 @@
-import { withAuth } from "next-auth/middleware"
-import { NextRequest } from "next/server"
-import prismadb from '@/libs/prismadb';
-import { NextPageContext } from "next";
-import { getSession } from "next-auth/react";
-
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
+import { Role } from "./libs/definitions";
+
+export async function middleware(req: NextRequest) {
+  const token = await getToken({ req });
+  const { pathname } = req.nextUrl;
  
-// This function can be marked `async` if using `await` inside
-export async function middleware(request: NextRequest) {
-    const token = await getToken({
-        req: request,
-        secret: process.env.NEXTAUTH_JWT_SECRET,
-      });
-  return null
+  if (!token) {
+    if (pathname === '/auth' || pathname.includes('/api/auth')) {
+      return NextResponse.next()
+    }
+    return NextResponse.redirect(new URL('/auth', req.url));
+  } 
+  
+  if ( (pathname === '/auth')) {
+      return NextResponse.redirect(new URL('/', req.url));
+  } 
+
+  if (pathname === '/admin' && token.role !== Role.ADMIN) {
+    return NextResponse.redirect(new URL('/', req.url));
+  }  
 }
-// Optionally, don't invoke Middleware on some paths
+
 export const config = {
-  //matcher: ['/((?!.+\\.[\\w]+$|_next).*)', '/', '/(api|trpc)(.*)'],
-  matcher: ["/", "/auth/login"]
-}
+  matcher: [
+    '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
+    '/(api|trpc)(.*)',
+  ],
+};
