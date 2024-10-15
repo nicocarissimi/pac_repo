@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import useCreateEditDialog from '@/hooks/useCreateEditDialog';
-import { Dialog,  DialogContent, DialogDescription,  DialogHeader, DialogTitle } from './ui/dialog';
-import { Button } from './ui/button';
-import { Input } from './ui/input';
-import { Form, FormControl,  FormField, FormItem, FormLabel, FormMessage } from './ui/form';
+import { Dialog,  DialogContent, DialogDescription,  DialogHeader, DialogTitle } from '../ui/dialog';
+import { Button } from '../ui/button';
+import { Input } from '../ui/input';
+import { Form, FormControl,  FormField, FormItem, FormLabel, FormMessage } from '../ui/form';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 import useCategories from '@/hooks/useCategories';
 import { CategoryInterface, defaultVideo } from '@/libs/definitions';
-import { MultiSelect } from './ui/multiselect';
+import { MultiSelect } from '../ui/multiselect';
 import axios from 'axios';
+import useCreateEditVideoDialog from '@/hooks/admin/useCreateEditVideoDialog';
 
 const categorySchema = z.object({
   name: z.string().min(2, {message: "Category must be at least 2 characters."})
@@ -37,16 +37,20 @@ const formSchema = z.object({
 })
 
 
-type VideoModalType = {
+type VideoModalProps = {
   onSubmitCallback?: (value: z.infer<typeof formSchema>) => void
 }
 
-const VideoModal = ({onSubmitCallback}: VideoModalType) => {
+const VideoModal = ({onSubmitCallback}: VideoModalProps) => {
 
-  const { video: v, isOpen, closeModal } = useCreateEditDialog();
+  const { video, isOpen, closeModal } = useCreateEditVideoDialog();
   const { data = [], mutate } = useCategories()
 
   const [allCategories, setAllCategories] = useState([{ label:"", value:"" }])
+
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+  })
 
   useEffect(() => {
     const newCategories = data.map((d: CategoryInterface) => {
@@ -62,18 +66,14 @@ const VideoModal = ({onSubmitCallback}: VideoModalType) => {
 
   },[data] )
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-  })
-
   
   useEffect(()=> {
-    if(v){
-      form.reset(v)
+    if(video){
+      form.reset(video)
     } else {
       form.reset(defaultVideo())
     }
-  },[v])
+  },[video])
 
   const handleClose = () => {
     closeModal()
@@ -98,7 +98,7 @@ const VideoModal = ({onSubmitCallback}: VideoModalType) => {
     <Dialog open={isOpen} onOpenChange={handleClose} modal={false}>
     <DialogContent className="sm:max-w-[600px]" onInteractOutside={(e)=>{e.preventDefault()}}>
       <DialogHeader>
-        <DialogTitle>Create new content</DialogTitle>
+        <DialogTitle>{video ? 'Edit': 'Create new'} content</DialogTitle>
         <DialogDescription>
           Make changes to your profile here. Click save when you're done.
         </DialogDescription>
@@ -180,7 +180,7 @@ const VideoModal = ({onSubmitCallback}: VideoModalType) => {
                 <div className='flex'>
                 <MultiSelect
                    options={allCategories}
-                   defaultValue={v? v.categories.map(category => category.name): undefined}
+                   defaultValue={video ? video.categories.map(category => category.name): undefined}
                    onItemCreate={handleCreateCategory}
                    placeholder="Select categories"
                    onValueChange={(selectedValues) => {
