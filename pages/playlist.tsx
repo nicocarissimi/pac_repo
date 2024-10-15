@@ -2,37 +2,13 @@ import React, { useCallback, useState } from 'react'
 import RootLayout from '../components/layout'
 import ContentList from '@/components/ContentList';
 import ToggleSwitch from '@/components/ToggleSwitch';
-import { NextPageContext } from 'next';
-import { getSession } from 'next-auth/react';
-import usePlaylist from '@/hooks/usePlaylist';
-import { useSWRConfig } from 'swr';
-import { ScrollArea } from "@/components/ui/scroll-area"
 import SidebarList from '@/components/playlist/SidebarList';
-import PlaylistModal from '@/components/playlist/PlaylistModal';
-import PlaylistContentModal from '@/components/playlist/ContentModal';
 import { Input } from '@/components/ui/input';
 import { debounce } from 'lodash';
+import PlaylistContentModal from '@/components/playlist/ContentModal';
+import PlaylistModal from '@/components/playlist/PlaylistModal';
 
 
-
-export async function getServerSideProps(context: NextPageContext) {
-  const session = await getSession(context);
-
-  if (!session) {
-    return {
-      redirect: {
-        destination: '/auth',
-        permanent: false,
-      }
-    }
-  }
-
-  return {
-    props: {}
-  }
-}
-
-// useState -> useEffect chiama usePlaylist
 
 const PlaylistPage = () => {
   const [myPlaylists, setMyPlaylists] = useState(true)

@@ -12,38 +12,27 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs"
-import useCreateEditDialog from '@/hooks/useCreateEditDialog';
 import Contents from '@/components/admin/ContentsTab';
-import PlaylistDisplay from '@/components/playlist/SidebarList';
 import Playlists from '@/components/admin/PlaylistsTab';
 import { TabsEnum } from '@/libs/definitions';
-
-export async function getServerSideProps(context: NextPageContext) {
-    const session = await getSession(context);
-    if (!session) {
-      return {
-        redirect: {
-          destination: '/auth',
-          permanent: false,
-        }
-      }
-    }
-  
-    return {
-      props: {}
-    }
-  } 
+import UsersTab from '@/components/admin/UsersTab';
+import useCreateEditVideoDialog from '@/hooks/admin/useCreateEditVideoDialog';
+import useCreateEditPlaylistDialog from '@/hooks/admin/useCreateEditPlaylistDialog';
 
   export default function AdminDashboard() {
-      const { openModal: openContentsModal } = useCreateEditDialog();  
+      const { openModal: openContentsModal } = useCreateEditVideoDialog();
+      const { openModal: openPlaylistModal }  = useCreateEditPlaylistDialog();
 
       const [tabValue, setTabValue] = useState(TabsEnum.CONTENTS)
 
       const handleOpenModal = () => {
         switch(tabValue) {
           case TabsEnum.CONTENTS: openContentsModal()
-          // case TabsEnum.PLAYLISTS: openPlaylistModal()
+          break;
+          case TabsEnum.PLAYLISTS: openPlaylistModal()
+          break;
           // case TabsEnum.USERS: openUsersModal()
+          // break;
           default: 
         }
       }
@@ -75,7 +64,7 @@ export async function getServerSideProps(context: NextPageContext) {
                   <Playlists />;
              </TabsContent>
               <TabsContent value='users'>
-                  <div className='text-red-500 2xl'>Ciaone</div>
+                  <UsersTab />
               </TabsContent>
             </Tabs>
           </div>

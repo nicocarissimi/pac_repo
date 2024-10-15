@@ -15,13 +15,13 @@ import {
     TableRow,
   } from "@/components/ui/table"
 import Image from "next/image"
-import useCreateEditDialog from "@/hooks/useCreateEditDialog"
 import axios from "axios"
 import { Badge } from "../ui/badge"
-import VideoModal from "../VideoModal"
+import VideoModal from "./VideoModal"
+import useCreateEditVideoDialog from "@/hooks/admin/useCreateEditVideoDialog"
 
 export const ContentsTab = () => {
-    const { openModal } = useCreateEditDialog();  
+    const { openModal } = useCreateEditVideoDialog();  
     const { data: videos=[], mutate } = useVideo()
     const [videoList, setVideoList] = useState([])
 
@@ -124,10 +124,10 @@ export const ContentsTab = () => {
             </Table>
           </CardContent>
           <CardFooter>
-            <div className="text-xs text-muted-foreground">
-              Showing <strong>1-10</strong> of <strong>32</strong>{" "}
-              products
-            </div>
+          <div className="text-xs text-muted-foreground">
+            Showing <strong>1-{videos.length < 10 ? videos.length : '10'}</strong> of <strong>{videos.length}</strong>{" "}
+            contents
+          </div>
           </CardFooter>
         </Card>
     </>

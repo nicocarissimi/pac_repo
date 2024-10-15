@@ -1,7 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import prismadb from '@/libs/prismadb';
-
-import { getSession } from "next-auth/react";
 import serverAuth from '@/libs/serverAuth';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -13,7 +11,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const { currentUser } = await serverAuth(req);
     if (req.method === 'GET') {
       const searchValue = req.query.search
-      console.log(req.query)
+      const infoVideo = Boolean(req.query.infoVideo)
       if(!req.query.hot){
         // Video is already in the user's playlist
         if(req.query.videoId){
@@ -62,15 +60,21 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             videos: {
               include: {
                 video: {
-                  select: {
-                    thumbnailUrl: true
+                  select:
+                    infoVideo ? {thumbnailUrl: true, title: true}: { thumbnailUrl: true },
                   }
                 }
               }
             }
           }
-        });
-        const response = playlists.map(({videos, ...rest}) => ({...rest,  thumbnailUrl: videos[0].video.thumbnailUrl}))
+        );
+        console.log(infoVideo)
+        console.log(playlists.map(playlist => playlist.videos.map(video => video.video)))
+        let response = playlists.map(({videos, ...rest}) => {
+          return infoVideo ?  
+          {...rest,  thumbnailUrl: videos[0].video.thumbnailUrl, videos_title: videos.map(video=>video.video.title)} :
+          {...rest,  thumbnailUrl: videos[0].video.thumbnailUrl}  
+        })
         return res.status(200).json(response);
       }
     }

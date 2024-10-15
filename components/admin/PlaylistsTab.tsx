@@ -8,12 +8,16 @@ import { MoreHorizontal } from "lucide-react"
 import { useEffect, useState } from "react"
 import usePlaylist from "@/hooks/usePlaylist"
 import { PlaylistInterface } from "@/libs/definitions"
+import PlaylistModal from "./PlaylistModal"
+import axios from "axios"
+import useCreateEditPlaylistDialog from "@/hooks/admin/useCreateEditPlaylistDialog"
+import { Badge } from "../ui/badge"
 
 export const PlaylistsTab = () => {
-    const { data: playlists=[], mutate } = usePlaylist(true)
-
-    const [playlistsList, setPlaylistsList] = useState(playlists)
-
+  const { openModal } = useCreateEditPlaylistDialog()
+    const { data: playlists=[], mutate } = usePlaylist(false, undefined, undefined, true)
+    const [playlistsList, setPlaylistsList] = useState([] as PlaylistInterface[])
+    
     useEffect(()=>{
         setPlaylistsList(playlists)
     },[playlists])
@@ -25,9 +29,15 @@ export const PlaylistsTab = () => {
     ))
     }
 
-    console.log(playlists)
+        
+    const handleCreateNewPlaylist = async(value: PlaylistInterface) => {
+      await axios.post('/api/playlist', { value })
+      mutate()
+    }
 
     return (
+      <>
+        <PlaylistModal onSubmitCallback={(value) => {}} />
         <Card x-chunk="dashboard-06-chunk-0">
         <CardHeader>
           <CardTitle>Playlists</CardTitle>
@@ -44,6 +54,7 @@ export const PlaylistsTab = () => {
                   <span className="sr-only">Image</span>
                 </TableHead>
                 <TableHead>Name</TableHead>
+                <TableHead>Videos</TableHead>
                 <TableHead>
                   <span className="sr-only">Actions</span>
                 </TableHead>
@@ -65,6 +76,13 @@ export const PlaylistsTab = () => {
                   {playlist.name}
                 </TableCell>
                 <TableCell>
+                  <div className='flex gap-2'>
+                    {playlist.videos_title?.map(title=> (
+                      <Badge key={title}>{title}</Badge>
+                    ))}
+                  </div>
+                </TableCell>
+                <TableCell>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button
@@ -77,7 +95,7 @@ export const PlaylistsTab = () => {
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                      <DropdownMenuItem onClick={()=> {}}>Edit</DropdownMenuItem>
+                      <DropdownMenuItem onClick={()=> openModal(playlist)}>Edit</DropdownMenuItem>
                       <DropdownMenuItem>Delete</DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
@@ -89,11 +107,12 @@ export const PlaylistsTab = () => {
         </CardContent>
         <CardFooter>
           <div className="text-xs text-muted-foreground">
-            Showing <strong>1-10</strong> of <strong>32</strong>{" "}
-            products
+            Showing <strong>1-{playlists.length < 10 ? playlists.length : '10'}</strong> of <strong>{playlists.length}</strong>{" "}
+            playlists
           </div>
         </CardFooter>
       </Card>
+      </>
     )
 }
 
