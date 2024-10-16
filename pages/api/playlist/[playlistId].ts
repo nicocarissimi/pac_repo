@@ -26,7 +26,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         let playlist;
 
         // If playlistId exists in the query, find that playlist
-        if (playlistId) {
+        if (playlistId && playlistId !== '1') {
           playlist = await prismadb.playlist.findUnique({
             where: {
               id: playlistId as string,  // Ensure playlistId is used as a string

@@ -25,7 +25,6 @@ const ContentList: React.FC<ContentListProps> = ({ playlistId,videoSearch, myPla
   const deleteVideoFromPlaylist = async(video: VideoInterface) =>{
     if(video?.id){
       const videoId = video.id;
-      console.log(videoId);
       try {
         await axios.delete(`/api/playlist/${playlistId}`, {
           data: { videoId }
