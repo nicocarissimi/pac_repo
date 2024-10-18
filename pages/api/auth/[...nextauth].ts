@@ -101,9 +101,14 @@ export const authOptions: NextAuthOptions = {
   },
   debug: process.env.NODE_ENV === 'development',
   adapter: PrismaAdapter(prismadb),
-  session: { strategy: 'jwt' },
+  session: { 
+    strategy: 'jwt', 
+    maxAge: 5 * 60,
+    updateAge: 1 * 60,
+  },
   jwt: {
     secret: process.env.NEXTAUTH_JWT_SECRET,
+    maxAge: 5 * 60,
   },
   secret: process.env.NEXTAUTH_SECRET,
 }
