@@ -5,15 +5,15 @@ const usePlaylist = (personalPlaylist: boolean, videoId?:string | undefined, sea
   let apiUrl = '/api/playlist'
   const params = new URLSearchParams();
 
-  !personalPlaylist && params.set('hot','1')
-  
+  params.set('hot', personalPlaylist.toString())
   // If videoId is provided, add it to the query string to exclude playlists that already contain the video
   videoId && params.set('videoId', videoId)
   // If infoVideo is true, each playlist also contains a video list, which is a list of all the videos it contains.
   infoVideo && params.set('infoVideo', infoVideo.toString())
   searchTerm && params.set('search', searchTerm)
   
-  const finalUrl = params.toString() ? `${apiUrl}?${params.toString()}` : apiUrl;
+  const finalUrl = `${apiUrl}?${params.toString()}`;
+
   const { data, error, isLoading, mutate } = useSwr(finalUrl, fetcher, {
     revalidateOnFocus: false,
     revalidateOnReconnect: false,
