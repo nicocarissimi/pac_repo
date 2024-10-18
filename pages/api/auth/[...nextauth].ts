@@ -88,7 +88,7 @@ export const authOptions: NextAuthOptions = {
       }
       return session;
     },
-    async signIn({user, account, profile}: {user: User, account: Account, profile: Profile}) {
+    async signIn({user, account}: {user: User, account: Account}) {
       if (account.provider === 'google' || account.provider === 'github') {
           user.role = 'user'; // Set a default role or customize it
           user.image = '/images/user/default-green.png';

@@ -55,6 +55,11 @@ export enum Role {
 
 export type UserRole = "admin" | "user"
 
+export enum UserRoleEnum {
+  ADMIN = 'admin',
+  USER = 'user'
+}
+
 export type ModalType = "playlist" | "video"
 
 export enum ModalEnum {

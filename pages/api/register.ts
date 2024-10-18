@@ -33,7 +33,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const imgSrc = images[Math.floor(Math.random() * images.length)];
 
 
-
     const user = await prismadb.user.create({
       data: {
         email,
