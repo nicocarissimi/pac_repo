@@ -42,6 +42,9 @@ const SidebarList: React.FC<PlaylistDisplayProps> = ({ myPlaylists, setPlaylistI
       handleShowPlaylistContent(playlist[0]);
       setPlaylist(playlist)
     }
+    else{
+      setPlaylist([])
+    }
   },[playlist]);
 
   const handleShowPlaylistContent = (playlist: PlaylistInterface) => {
@@ -121,14 +124,14 @@ const SidebarList: React.FC<PlaylistDisplayProps> = ({ myPlaylists, setPlaylistI
                   //Dropdown Menu for Playlist Actions
                   <DropdownMenu modal={false}>
                     <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="icon">
+                      <Button variant="ghost" size="icon" data-testid="action-button">
                         <Ellipsis className="w-4 h-4" />
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                      <DropdownMenuItem asChild onClick={() => handleEditPlaylist(playlist.id, playlist.name, playlist.isPublic)}>
+                      <DropdownMenuItem data-testid="edit-button" asChild onClick={() => handleEditPlaylist(playlist.id, playlist.name, playlist.isPublic)}>
                         <div className="relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors focus:bg-acc focus:text-accent-foreground">
-                          <Edit className="mr-2 h-4 w-4" />
+                          <Edit className="mr-2 h-4 w-4"/>
                           <span>Edit</span>
                         </div>
                       </DropdownMenuItem>
@@ -136,7 +139,7 @@ const SidebarList: React.FC<PlaylistDisplayProps> = ({ myPlaylists, setPlaylistI
                         <AlertDialog open={showAlert}>
                           <div className="relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors focus:bg-acc focus:text-accent-foreground">
                             <Trash className="mr-2 h-4 w-4" />
-                            <span onClick={handleToggleAlert}>Delete Playlist</span>
+                            <span data-testid="delete-button" onClick={handleToggleAlert}>Delete Playlist</span>
                           </div>
                           <AlertDialogContent>
                             <AlertDialogHeader>

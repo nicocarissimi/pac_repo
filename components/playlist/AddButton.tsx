@@ -6,6 +6,7 @@ import useCurrentUser from '@/hooks/useCurrentUser';
 import useFavorites from '@/hooks/useFavorites';
 import PlaylistModal from './PlaylistModal';
 import PlaylistDisplay from './SidebarList';
+import AddVideoPlaylist from './AddVideoPlaylist';
 
 interface FavoriteButtonProps {
   movieId: string
@@ -27,9 +28,8 @@ const FavoriteButton: React.FC<FavoriteButtonProps> = ({ movieId }) => {
     </div>
     {showModal && (
         
-        <
-              myPlaylists={true} 
-              showControls={false}        
+        <AddVideoPlaylist
+              videoId={movieId}        
         />
         
       )}

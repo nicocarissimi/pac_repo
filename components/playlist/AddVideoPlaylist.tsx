@@ -68,17 +68,6 @@ const AddVideoPlaylist: React.FC<PlaylistDisplayProps> = ({ videoId, closePlayli
                   }`}
                 onClick={() => handlePlaylistSelect(playlist)}
               >
-                <div className="flex my-2 justify-start">
-                  {playlist.thumbnailUrl &&(
-                    <Image
-                    alt="Product image"
-                    className="aspect-square rounded-md object-cover bg-gray-400"
-                    height="100"
-                    src={playlist.thumbnailUrl}
-                    width="100"
-                  />
-                  )}
-                  </div>
                 <div className='flex-1 my-2'>
                   {playlist.name}
                 </div>
