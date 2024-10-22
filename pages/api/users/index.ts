@@ -28,11 +28,7 @@ async function DELETE(userId: string) {
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
 
-    const { currentUser } = await serverAuth(req);
-
-    if (!currentUser) {
-        throw new Error('Not signed in');
-    }
+    await serverAuth(req);
 
     switch (req.method) {
         case 'GET': 
