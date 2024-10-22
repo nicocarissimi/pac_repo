@@ -24,18 +24,25 @@ const formSchema = z.object({
     message: "Description must be at least 1 character."
   }),
   duration: z.string()
-    .transform(value => parseInt(value))
-    .refine(value => !isNaN(value), {message: "Insert a valid number"})
-    .refine(value => value > 0, {message: "Duration must be greater than 0"}),
+    .transform(value => parseFloat(value))
+    .refine(value => {
+      if (isNaN(value)) return false
+      if (value <= 0) return false
+      const hours = Math.floor(value)
+      const minutes = (value-hours) * 100;
+      return minutes <= 59;
+      },
+      {message: "Insert valid duration value in minutes. You can specify maximum two significative values"
+    }),
   videoUrl: z.string().refine((url) => {
       return url.startsWith('http://') || url.startsWith('https://');
     }, {
     message: "Video Url must contains a valid url. you have to specify the protocol (http or https) as well"
     }),
   thumbnailUrl: z.string().refine((url) => {
-    return url.startsWith('http://') || url.startsWith('https://');
+    return url.startsWith('https://');
   }, {
-  message: "Thumbnail Url must contains a valid url. you have to specify the protocol (http or https) as well"
+  message: "Thumbnail Url must contains a valid url. Futhermore allowed protocol is just https"
   }),
   categories: z.array(categorySchema).nonempty({ message: "Please select at least one category"})
 })
@@ -141,7 +148,7 @@ const VideoModal = ({onSubmitCallback}: VideoModalProps) => {
             <FormItem>
               <FormLabel>Duration (min)</FormLabel>
               <FormControl>
-                <Input type="number" placeholder="Insert duratioon in minutes..." {...field} />
+                <Input placeholder="Insert duratioon in minutes..." {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>

@@ -4,7 +4,7 @@ export interface VideoInterface {
     description: string;
     thumbnailUrl: string;
     videoUrl: string;
-    duration: number;
+    duration: number | undefined;
     categories:  CategoryInterface[]
 }
 
@@ -20,7 +20,7 @@ export function defaultVideo(): VideoInterface {
     description: "",
     thumbnailUrl: "",
     videoUrl: "",
-    duration: 0,
+    duration: undefined,
     categories: [{name:""}]
   };
 }

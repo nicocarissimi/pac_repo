@@ -42,7 +42,7 @@ model Video {
   videoUrl      String @unique
   thumbnailUrl  String
   categories    VideosInCategories[]
-  duration      Int
+  duration      Float
   playlist      VideosInPlaylists[]
 }
 
