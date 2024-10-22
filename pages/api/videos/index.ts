@@ -1,11 +1,11 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import prismadb from '@/libs/prismadb';
 import serverAuth from "@/libs/serverAuth";
-import { CategoryInterface } from "@/libs/definitions";
+import { CategoryInterface, VideoInterface } from "@/libs/definitions";
 
 
 
-async function get(res: NextApiResponse) {
+async function GET() {
   const videos = await prismadb.video.findMany({
     include: {
       categories: {
@@ -25,11 +25,10 @@ async function get(res: NextApiResponse) {
       categories: video.categories.map(item => ({name: item.category.name}))
   }))
 
-  return res.status(200).json(videosVideoInterface);
+  return videosVideoInterface
 }
 
-async function post(req: NextApiRequest, res: NextApiResponse) {
-    const item = req.body.value
+async function POST(item: VideoInterface) {
 
     const existingVideo = await prismadb.video.findFirst({ where: { videoUrl: item.videoUrl}, select: {categories: { select: { category: true}}}})
 
@@ -73,7 +72,7 @@ async function post(req: NextApiRequest, res: NextApiResponse) {
             duration: item.duration
           }
         })     
-        return res.status(200).json(newVideo)
+        return newVideo
     }
       const categoryIds = async() => {
         return selectedCategories.map((category: CategoryInterface) => ({
@@ -98,35 +97,24 @@ async function post(req: NextApiRequest, res: NextApiResponse) {
         }
       })  
       
-      return res.status(200).json(newVideo)
+      return newVideo
 
 
 }
 
-
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  try {
 
-    if (req.method !== 'GET' && req.method !== 'POST') {
-      return res.status(405).end();
-    }
+  await serverAuth(req)
 
-    try {
-      await serverAuth(req);
-    } catch (error) {
-      console.log(error)
-    }
+  switch (req.method) {
+    case 'GET': 
+        const users = await GET()
+        return res.status(200).json(users)
+    case 'POST': 
+        const { value } = req.body;
+        const updateVideo = await POST(value)
+        return res.status(201).json(updateVideo);
+    default: return res.status(405).end();
+}
 
-    if (req.method === 'POST') {
-      return post(req, res)
-    }
-
-    if (req.method === 'GET' ) {
-      return get(res)
-    }
-
-  } catch (error) {
-    console.error({ error })
-    return res.status(500).end();
-  }
 }

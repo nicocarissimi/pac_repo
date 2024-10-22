@@ -2,33 +2,38 @@ import { NextApiRequest, NextApiResponse } from "next";
 import prismadb from '@/libs/prismadb';
 import serverAuth from "@/libs/serverAuth";
 
+
+async function GET(videoId: string) {
+  const videos = await prismadb.video.findUnique({
+    where: {
+      id: videoId
+    }
+  });
+  return videos
+}
+
+async function DELETE(videoId: string){
+  console.log(videoId)
+  const removedVideo = await prismadb.video.delete({where:{id: videoId}})
+  return removedVideo
+}
+
+
+
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  try {
-    if (req.method !== 'GET') {
-      return res.status(405).end();
-    }
 
-    await serverAuth(req);
+  await serverAuth(req);
 
-    const { videoId } = req.query;
-
-    if (typeof videoId !== 'string') {
-      throw new Error('Invalid Id');
-    }
-
-    if (!videoId) {
-      throw new Error('Missing Id');
-    }
-
-    const videos = await prismadb.video.findUnique({
-      where: {
-        id: videoId
-      }
-    });
-
-    return res.status(200).json(videos);
-  } catch (error) {
-    console.error(error);
-    return res.status(500).end();
-  }
+  switch (req.method) {
+    case 'GET': 
+        const { videoId: id } = req.query
+        const users = await GET(id as string)
+        return res.status(200).json(users)
+    case 'DELETE': 
+        const { videoId } = req.query
+        const removedVideo = await DELETE(videoId as string)
+        return res.status(200).json(removedVideo)
+    default: return res.status(405).end();
+}
 }
