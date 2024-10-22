@@ -43,7 +43,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             const updateUser = await POST(id)
             return res.status(201).json(updateUser);
         case 'DELETE': 
-            const { userId } = req.body
+            const { id: userId } = req.body
             const removedUser = await DELETE(userId)
             return res.status(200).json(removedUser)
         default: return res.status(405).end();
