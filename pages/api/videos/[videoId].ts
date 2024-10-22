@@ -13,7 +13,6 @@ async function GET(videoId: string) {
 }
 
 async function DELETE(videoId: string){
-  console.log(videoId)
   const removedVideo = await prismadb.video.delete({where:{id: videoId}})
   return removedVideo
 }

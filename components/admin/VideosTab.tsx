@@ -42,7 +42,12 @@ export const VideosTab = () => {
     const handleCreateNewVideo = async(value: VideoInterface) => {
         await axios.post('/api/videos', { value })
         mutate()
-      }
+    }
+
+    const handleDeleteVideo = async(videoId: string) => {
+        await axios.delete(`/api/videos/${videoId}`)
+        mutate()
+    }
 
 
     return (
@@ -114,7 +119,7 @@ export const VideosTab = () => {
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         <DropdownMenuItem onClick={()=> openModal(video)}>Edit</DropdownMenuItem>
-                        <DropdownMenuItem>Delete</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleDeleteVideo(video.id!)}>Delete</DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>
