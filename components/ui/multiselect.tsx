@@ -205,6 +205,7 @@ export const MultiSelect = React.forwardRef<
       if (onItemCreate) {
         onItemCreate(inputValue)
       }
+      setSelectedValues((v)=>[...v, inputValue])
       setInputValue('')
     }
 
