@@ -1,5 +1,3 @@
-import { NextPageContext } from 'next';
-import { getSession } from 'next-auth/react';
 import React, { useState } from 'react'
 import RootLayout from '@/components/layout';
 import {
@@ -12,12 +10,12 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs"
-import Contents from '@/components/admin/ContentsTab';
 import Playlists from '@/components/admin/PlaylistsTab';
 import { TabsEnum } from '@/libs/definitions';
 import UsersTab from '@/components/admin/UsersTab';
 import useCreateEditVideoDialog from '@/hooks/admin/useCreateEditVideoDialog';
 import useCreateEditPlaylistDialog from '@/hooks/admin/useCreateEditPlaylistDialog';
+import { VideosTab } from '@/components/admin/VideosTab';
 
   export default function AdminDashboard() {
       const { openModal: openContentsModal } = useCreateEditVideoDialog();
@@ -59,7 +57,7 @@ import useCreateEditPlaylistDialog from '@/hooks/admin/useCreateEditPlaylistDial
               }
               </div>
               <TabsContent value="contents">
-                  <Contents />
+                  <VideosTab />
               </TabsContent>
               <TabsContent value='playlists'>
                   <Playlists />;
