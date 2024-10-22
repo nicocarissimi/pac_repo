@@ -23,7 +23,7 @@ import useCreateEditVideoDialog from "@/hooks/admin/useCreateEditVideoDialog"
 export const ContentsTab = () => {
     const { openModal } = useCreateEditVideoDialog();  
     const { data: videos=[], mutate } = useVideo()
-    const [videoList, setVideoList] = useState([])
+    const [videoList=[], setVideoList] = useState([])
 
     useEffect(()=>{
         setVideoList(videos)

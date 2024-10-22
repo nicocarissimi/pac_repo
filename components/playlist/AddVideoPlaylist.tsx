@@ -25,7 +25,6 @@ const AddVideoPlaylist: React.FC<PlaylistDisplayProps> = ({ videoId, closePlayli
   },[playlist]);
 
   const handleAddVideo = useCallback(async () => {
-    console.log('Adding video:', videoId, ' to playlist:', selectedPlaylist.id );
     try {
       await axios.post(`/api/playlist/${selectedPlaylist.id}`, {
         videoId
@@ -53,7 +52,6 @@ const AddVideoPlaylist: React.FC<PlaylistDisplayProps> = ({ videoId, closePlayli
 
   const handlePlaylistSelect = useCallback((playlist: PlaylistInterface) => {
     setSelectPlaylist(playlist)
-    console.log(selectedPlaylist.id);
   },[selectedPlaylist]);
   
   return (

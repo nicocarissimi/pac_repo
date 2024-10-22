@@ -12,7 +12,6 @@ interface ToggleProps {
   const [isActive, setIsActive] = useState(boolFlag);
 
   const handleToggle = useCallback(() => {
-    console.log(boolFlag)
     if(boolFlag !== null){
       setIsActive(s=>!s)
       setBool(!boolFlag)

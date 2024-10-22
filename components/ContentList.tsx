@@ -9,6 +9,8 @@ import usePlaylistModalStore from '@/hooks/usePlaylistModalStore';
 import axios from 'axios';
 import { useSWRConfig } from 'swr';
 import { useRouter } from 'next/router';
+import useVideo from '@/hooks/useVideo';
+import EmptyContent from './playlist/EmptyContent';
 
 interface ContentListProps {
   myPlaylists: boolean
@@ -18,10 +20,11 @@ interface ContentListProps {
 
 const ContentList: React.FC<ContentListProps> = ({ playlistId,videoSearch, myPlaylists }) => {
 
-  const { mutate } = useSWRConfig();
+  const { mutate, cache } = useSWRConfig();
   const router = useRouter();
   const { openPlaylistModal } = usePlaylistModalStore();
   const { data: videoList = [] } = usePlaylistContent(playlistId,videoSearch) as { data: VideoInterface[] };
+
   const deleteVideoFromPlaylist = async(video: VideoInterface) =>{
     if(video?.id){
       const videoId = video.id;
@@ -30,6 +33,7 @@ const ContentList: React.FC<ContentListProps> = ({ playlistId,videoSearch, myPla
           data: { videoId }
         }).then(() => {
           mutate(`/api/playlist/${playlistId}`);
+          mutate(`/api/playlist`);
         });
           } catch (error) {
             if (axios.isAxiosError(error)) {
@@ -48,6 +52,11 @@ const ContentList: React.FC<ContentListProps> = ({ playlistId,videoSearch, myPla
           }
       }
     };
+  if(videoList.length===0){
+    return (
+      <EmptyContent playlistId={playlistId}/>
+    )
+  }
 
   return (
     <ScrollArea className="h-full w-full rounded-md">

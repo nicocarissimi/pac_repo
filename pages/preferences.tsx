@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Router } from 'next/router';
 
 const dramaTechniques = [
   { id: 'improvisation', label: 'Improvisation' },
@@ -50,7 +51,6 @@ export default function DramaPreferences() {
     await new Promise(resolve => setTimeout(resolve, 1500));
     setIsSubmitting(false);
     setIsSuccess(true);
-
   };
 
   return (
@@ -58,7 +58,7 @@ export default function DramaPreferences() {
       {/* Transitioning "Welcome to" and logo */}
       <div
         className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 transition-all duration-1000 ${
-          isShrinking ? 'top-72 left-1/2 transform scale-75' : ''
+          isShrinking ? 'top-1/4 left-1/2 transform scale-75' : ''
         }`}
       >
         {/* Welcome text */}
@@ -82,7 +82,7 @@ export default function DramaPreferences() {
       {/* The form content below the shrinking animation */}
       <div
         className={`transition-all duration-1000 ${
-          isShrinking ? 'opacity-100 translate-y-[-80px]' : 'opacity-0 translate-y-[200px]'
+          isShrinking ? 'opacity-100 translate-y-[-3/4]' : 'opacity-0 translate-y-[200px]'
         }`}
       >
         <p className="text-center text-zinc-400 mb-8">

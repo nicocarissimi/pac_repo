@@ -21,11 +21,12 @@ import { Button } from '../ui/button';
 import Image from "next/image"
 interface PlaylistDisplayProps {
   myPlaylists: boolean;
-  setPlaylistId?: (id: string) => void;
+  playlistId:string;
+  setPlaylistId: (id: string) => void;
   playlistSearch: string;
 }
 
-const SidebarList: React.FC<PlaylistDisplayProps> = ({ myPlaylists, setPlaylistId, playlistSearch }) => {
+const SidebarList: React.FC<PlaylistDisplayProps> = ({ myPlaylists, playlistId, setPlaylistId, playlistSearch }) => {
 
   const { mutate } = useSWRConfig()
   const [showAlert, setShowAlert] = useState(false);
@@ -38,14 +39,23 @@ const SidebarList: React.FC<PlaylistDisplayProps> = ({ myPlaylists, setPlaylistI
 
   useEffect(() => {
     if(playlist.length > 0) {
-      setSelectPlaylist(playlist[0]);
-      handleShowPlaylistContent(playlist[0]);
+      const prevSelected = playlist.find((p)=> p.id === playlistId)
+      if (prevSelected){
+        setSelectPlaylist(prevSelected);
+        handleShowPlaylistContent(prevSelected);
+      }
+      else{
+        setSelectPlaylist(playlist[0]);
+        handleShowPlaylistContent(playlist[0]);
+      }
+      
       setPlaylist(playlist)
     }
     else{
       setPlaylist([])
+      setPlaylistId("0")
     }
-  },[playlist]);
+  },[playlist,setPlaylistId,playlistId]);
 
   const handleShowPlaylistContent = (playlist: PlaylistInterface) => {
     if (setPlaylistId) {
@@ -55,24 +65,20 @@ const SidebarList: React.FC<PlaylistDisplayProps> = ({ myPlaylists, setPlaylistI
 
   const handlePlaylistSelect = useCallback((playlist: PlaylistInterface) => {
     setSelectPlaylist(playlist)
-    console.log(selectedPlaylist.id);
   },[selectedPlaylist]);
 
   const handleEditPlaylist = (id: string, name: string, isPub: boolean) => {
     setPlaylistId!(id)
     setPlaylistName(name);
     setIsPublic(isPub);
-    console.log('Editing playlist:', id, name, isPub);
     setShowModal(true);
   };
   const handleDeletePlaylist = useCallback(async () => {
-    console.log('Deleting playlist:', selectedPlaylist.id);
     try {
       await axios.delete(`/api/playlist/${selectedPlaylist.id}`, {
       });
     }
     catch (error) {
-      console.log(error);
     }
     setSelectPlaylist({} as PlaylistInterface);
     handleToggleAlert();

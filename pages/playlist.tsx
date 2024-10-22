@@ -33,7 +33,7 @@ const PlaylistPage = () => {
         setPlaylistSearchValue(value)
         }
       }
-      , 600),
+      , 1000),
     []
   );
 
@@ -80,6 +80,7 @@ const PlaylistPage = () => {
             
             <SidebarList
                 myPlaylists={myPlaylists}
+                playlistId={playlistId}
                 setPlaylistId={setPlaylistId}
                 playlistSearch={playlistSearchValue}
               />
