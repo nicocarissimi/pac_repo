@@ -61,7 +61,6 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     jwt: async ({ token, user, account }) => {
       if (user) {
-        // console.log("jwt callback", { session, token, user });
         let dbUser = null;
         if (account?.provider === 'github' || account?.provider === 'google' ) {
           dbUser = await prismadb.user.findUnique({
@@ -103,11 +102,9 @@ export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prismadb),
   session: { 
     strategy: 'jwt', 
-    maxAge: 5 * 60,
   },
   jwt: {
     secret: process.env.NEXTAUTH_JWT_SECRET,
-    maxAge: 5 * 60,
   },
   secret: process.env.NEXTAUTH_SECRET,
 }
