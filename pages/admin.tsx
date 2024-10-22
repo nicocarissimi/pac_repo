@@ -21,11 +21,11 @@ import { VideosTab } from '@/components/admin/VideosTab';
       const { openModal: openContentsModal } = useCreateEditVideoDialog();
       const { openModal: openPlaylistModal }  = useCreateEditPlaylistDialog();
 
-      const [tabValue, setTabValue] = useState(TabsEnum.CONTENTS)
+      const [tabValue, setTabValue] = useState(TabsEnum.VIDEOS)
 
       const handleOpenModal = () => {
         switch(tabValue) {
-          case TabsEnum.CONTENTS: openContentsModal()
+          case TabsEnum.VIDEOS: openContentsModal()
           break;
           case TabsEnum.PLAYLISTS: openPlaylistModal()
           break;
@@ -40,7 +40,7 @@ import { VideosTab } from '@/components/admin/VideosTab';
             <Tabs value={tabValue}>
               <div className="flex items-center">
               <TabsList>
-                <TabsTrigger value="contents" onClick={()=>setTabValue(TabsEnum.CONTENTS)}>Contents</TabsTrigger>
+                <TabsTrigger value="videos" onClick={()=>setTabValue(TabsEnum.VIDEOS)}>Videos</TabsTrigger>
                 <TabsTrigger value="playlists" onClick={()=>setTabValue(TabsEnum.PLAYLISTS)}>Playlists</TabsTrigger>
                 <TabsTrigger value="users" onClick={()=>setTabValue(TabsEnum.USERS)}>Users</TabsTrigger>
               </TabsList>
@@ -56,7 +56,7 @@ import { VideosTab } from '@/components/admin/VideosTab';
                 </div>
               }
               </div>
-              <TabsContent value="contents">
+              <TabsContent value="videos">
                   <VideosTab />
               </TabsContent>
               <TabsContent value='playlists'>

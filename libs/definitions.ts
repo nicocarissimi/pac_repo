@@ -68,7 +68,7 @@ export enum ModalEnum {
 }
 
 export enum TabsEnum {
-  CONTENTS='contents',
+  VIDEOS='videos',
   PLAYLISTS= 'playlists',
   USERS= 'users'
 }

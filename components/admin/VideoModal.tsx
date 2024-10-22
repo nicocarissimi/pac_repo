@@ -27,11 +27,15 @@ const formSchema = z.object({
     .transform(value => parseInt(value))
     .refine(value => !isNaN(value), {message: "Insert a valid number"})
     .refine(value => value > 0, {message: "Duration must be greater than 0"}),
-  videoUrl: z.string().min(1, {
-    message: "videoUrl must contains a valid url"
-  }),
-  thumbnailUrl: z.string().min(1, {
-    message: "thmbnailUrl must contains a valid url"
+  videoUrl: z.string().refine((url) => {
+      return url.startsWith('http://') || url.startsWith('https://');
+    }, {
+    message: "Video Url must contains a valid url. you have to specify the protocol (http or https) as well"
+    }),
+  thumbnailUrl: z.string().refine((url) => {
+    return url.startsWith('http://') || url.startsWith('https://');
+  }, {
+  message: "Thumbnail Url must contains a valid url. you have to specify the protocol (http or https) as well"
   }),
   categories: z.array(categorySchema).nonempty({ message: "Please select at least one category"})
 })
@@ -77,8 +81,7 @@ const VideoModal = ({onSubmitCallback}: VideoModalProps) => {
 
   const handleClose = () => {
     closeModal()
-    form.reset()
-    form.clearErrors()
+    form.reset(defaultVideo())
   }
 
   const handleCreateCategory = async(value: string) => {
