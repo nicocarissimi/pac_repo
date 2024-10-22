@@ -33,20 +33,14 @@ const PlaylistModal: React.FC<PlaylistModalProps> = ({
       if(!playlist){
         await axios.post('/api/playlist', {
           Playlist
-        }).then((response) => {
-        console.log('New Playlist:', Playlist);
-        });
+        })
       }else{
-        console.log("Updating playlist:", Playlist);
         await axios.put('/api/playlist', {
           Playlist
-        }).then((response) => {
-          console.log('Updated Playlist:', Playlist);
-          });;
+        })
       }
     }
       catch (error) {
-        console.log(error);
     }
     // Here you would typically update the playlist state or make an API call to save the playlist
     mutate('/api/playlist');

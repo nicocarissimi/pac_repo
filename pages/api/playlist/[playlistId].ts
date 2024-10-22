@@ -1,180 +1,186 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getSession } from 'next-auth/react';
 import prismadb from '@/libs/prismadb'; // Assuming you have Prisma set up
+import serverAuth from '@/libs/serverAuth';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const session = await getSession({ req });
+    const {currentUser} = await serverAuth(req)
 
-  if (!session?.user?.email) {
-    return res.status(401).json({ error: 'Not signed in' });
+    // Switch statement to handle different HTTP methods
+    switch (req.method) {
+      case 'GET':
+        return await handleGet(req, res);
+
+      case 'POST':
+        return await handlePost(req, res);
+
+      case 'DELETE':
+        return await handleDelete(req, res, currentUser.id);
+
+      case 'PUT':
+        return await handlePut(req, res, currentUser.id);
+
+      default:
+        res.setHeader('Allow', ['GET', 'POST', 'DELETE', 'PUT']);
+        return res.status(405).json({ error: `Method ${req.method} not allowed` });
+    }
+
   }
 
+// Handle GET request
+async function handleGet(req: NextApiRequest, res: NextApiResponse) {
   try {
-    // Fetch user
-    const user = await prismadb.user.findUnique({
-      where: { email: session.user.email },
+    const { playlistId, search } = req.query;
+    let playlist;
+
+    if (playlistId && playlistId !== '1') {
+      playlist = await prismadb.playlist.findUnique({
+        where: { id: playlistId as string },
+      });
+    }
+
+    if (!playlist) {
+      playlist = await prismadb.playlist.findFirst({
+        where: { isPublic: true },
+      });
+    }
+
+    if (!playlist) {
+      return res.status(404).json({ error: 'No playlist found' });
+    }
+
+    const videos = await prismadb.videosInPlaylists.findMany({
+      where: {
+        playlistId: playlist.id,
+        video: {
+          title: search ? {
+            contains: String(search),
+            mode: 'insensitive',
+          } : {},
+        },
+      },
+      include: { video: true },
     });
 
-    if (!user) {
-      return res.status(400).json({ error: 'User not found' });
+    const videoDetails = videos.map((item) => ({
+      id: item.video.id,
+      title: item.video.title,
+      thumbnailUrl: item.video.thumbnailUrl,
+      duration: item.video.duration,
+      description: item.video.description,
+      videoUrl: item.video.videoUrl,
+    }));
+
+    return res.status(200).json(videoDetails);
+
+  } catch (error) {
+    console.error('Error fetching playlist:', error);
+    return res.status(500).end();
+  }
+}
+
+// Handle POST request
+async function handlePost(req: NextApiRequest, res: NextApiResponse) {
+  const { playlistId } = req.query;
+  const { videoId } = req.body;
+
+  try {
+    const existingEntry = await prismadb.videosInPlaylists.findFirst({
+      where: {
+        playlistId: playlistId as string,
+        videoId: videoId as string,
+      },
+    });
+
+    if (existingEntry) {
+      return res.status(409).json({ message: 'Video is already in the playlist' });
     }
 
-    if (req.method === 'GET') {
-      try {
-        const { playlistId,search } = req.query;
-        console.log(search)
-        let playlist;
+    const videoInPlaylist = await prismadb.videosInPlaylists.create({
+      data: {
+        playlistId: playlistId as string,
+        videoId: videoId as string,
+      },
+    });
 
-        // If playlistId exists in the query, find that playlist
-        if (playlistId && playlistId !== '1') {
-          playlist = await prismadb.playlist.findUnique({
-            where: {
-              id: playlistId as string,  // Ensure playlistId is used as a string
-            },
-          });
-          }
+    return res.status(201).json(videoInPlaylist);
 
-          // If no playlist with the given ID get first public playlist
-          if (!playlist) {
-            playlist = await prismadb.playlist.findFirst({
-              where: {
-                isPublic: true,
-              },
-            });
-            }
+  } catch (error) {
+    console.error('Error adding video to playlist:', error);
+    return res.status(500).json({ error: 'Failed to add video to playlist' });
+  }
+}
 
-            if (!playlist) {
-              return res.status(404).json({ error: 'No playlist found' });
-            }
+// Handle DELETE request
+async function handleDelete(req: NextApiRequest, res: NextApiResponse, userId: string) {
+  const { playlistId } = req.query;
+  const { videoId } = req.body;
 
-            const videos = await prismadb.videosInPlaylists.findMany({
-              where: {
-                playlistId: playlist.id,
-                video:{
-                    title: search?{
-                      contains: String(search),
-                      mode: 'insensitive'
-                    }:{},
-                }
-              },
-              include: {
-                video: true,  // Assuming the relation to the 'videos' table is named 'video'
-              },
-            });
+  try {
+    const playlist = await prismadb.playlist.findUnique({
+      where: { id: playlistId as string },
+    });
 
-            if (videos.length === 0) {
-              return res.status(404).json({ error: 'No videos found in this playlist' });
-            }
-        
-            // Map and extract video details such as thumbnailUrl, duration, etc.
-            const videoDetails = videos.map((item) => ({
-              id: item.video.id,
-              title: item.video.title,
-              thumbnailUrl: item.video.thumbnailUrl,
-              duration: item.video.duration,
-              description: item.video.description,
-              videoUrl: item.video.videoUrl,
-            }));
-        
-            return res.status(200).json(videoDetails);
-        
-          } catch (error) {
-        console.error(error);
-        return res.status(500).end();
-      }
+    if (!playlist) {
+      return res.status(404).json({ error: 'Playlist not found' });
     }
 
-    // Handle POST
-    if (req.method === 'POST') {
-      const { playlistId } = req.query;
-      const { videoId } = req.body;
-      // Check if new
-      const existingEntry = await prismadb.videosInPlaylists.findFirst({
+    if (playlist.userId !== userId) {
+      return res.status(403).json({ error: 'You do not have permission to delete this playlist' });
+    }
+
+    if (videoId) {
+      await prismadb.videosInPlaylists.deleteMany({
         where: {
           playlistId: playlistId as string,
           videoId: videoId as string,
         },
       });
-
-      if (existingEntry) {
-        return res.status(409).json({ message: 'Video is already in the playlist' });
-      }
-
-      // Create new record video-playlist
-      const videoInPlaylist = await prismadb.videosInPlaylists.create({
-        data: {
-          playlistId: playlistId as string,
-          videoId: videoId as string,
-        },
-      });
-      return res.status(201).json(videoInPlaylist);
+      return res.status(200).json({ message: 'Video deleted successfully' });
     }
 
-    // Handle DELETE
-    if (req.method === 'DELETE') {
-      const { playlistId } = req.query;
-      const { videoId } = req.body;
-      console.log(videoId)
-      const playlist = await prismadb.playlist.findUnique({
-        where: { id: playlistId as string },
-      });
-      if (!playlist) {
-        return res.status(404).json({ error: 'Playlist not found' });
-      }
+    await prismadb.playlist.delete({
+      where: { id: playlistId as string },
+    });
 
-      // Check if the playlist belongs to the user
-      if (playlist.userId !== user.id) {
-        return res.status(403).json({ error: 'You do not have permission to delete this playlist' });
-      }
-      if(videoId) {
-        await prismadb.videosInPlaylists.deleteMany({
-          where: {
-            playlistId: playlistId as string,
-            videoId: videoId as string,
-          },
-        })
-        return res.status(200).json({ message: 'Video deleted successfully' });
-      }
-
-      await prismadb.playlist.delete({
-        where: { id: playlistId as string },
-      });
-
-      return res.status(200).json({ message: 'Playlist deleted successfully' });
-    }
-
-    // Handle PUT
-    if (req.method === 'PUT') {
-      const { playlistId } = req.query;
-      const { name, isPublic } = req.body;
-      const playlist = await prismadb.playlist.findUnique({
-        where: { id: playlistId as string },
-      });
-
-      if (!playlist) {
-        return res.status(404).json({ error: 'Playlist not found' });
-      }
-      if (playlist.userId !== user.id) {
-        return res.status(403).json({ error: 'You do not have permission to edit this playlist' });
-      }
-      // Update
-      const updatedPlaylist = await prismadb.playlist.update({
-        where: { id: playlistId as string },
-        data: {
-          name: name || playlist.name, // If name is provided, update it; otherwise, keep the old name
-          isPublic: typeof isPublic === 'boolean' ? isPublic : playlist.isPublic, // Update if isPublic is provided
-        },
-      });
-
-      return res.status(200).json(updatedPlaylist);
-    }
-
-    //method not allowed
-    res.setHeader('Allow', ['DELETE', 'PUT']);
-    return res.status(405).json({ error: `Method ${req.method} not allowed` });
+    return res.status(200).json({ message: 'Playlist deleted successfully' });
 
   } catch (error) {
-    console.error('Error handling playlist:', error);
-    return res.status(500).json({ error: 'Internal server error' });
+    console.error('Error deleting playlist or video:', error);
+    return res.status(500).json({ error: 'Failed to delete playlist or video' });
+  }
+}
+
+// Handle PUT request
+async function handlePut(req: NextApiRequest, res: NextApiResponse, userId: string) {
+  const { playlistId } = req.query;
+  const { name, isPublic } = req.body;
+
+  try {
+    const playlist = await prismadb.playlist.findUnique({
+      where: { id: playlistId as string },
+    });
+
+    if (!playlist) {
+      return res.status(404).json({ error: 'Playlist not found' });
+    }
+
+    if (playlist.userId !== userId) {
+      return res.status(403).json({ error: 'You do not have permission to edit this playlist' });
+    }
+
+    const updatedPlaylist = await prismadb.playlist.update({
+      where: { id: playlistId as string },
+      data: {
+        name: name || playlist.name,
+        isPublic: typeof isPublic === 'boolean' ? isPublic : playlist.isPublic,
+      },
+    });
+
+    return res.status(200).json(updatedPlaylist);
+
+  } catch (error) {
+    console.error('Error updating playlist:', error);
+    return res.status(500).json({ error: 'Failed to update playlist' });
   }
 }

@@ -11,6 +11,7 @@ import { useSWRConfig } from 'swr';
 import { useRouter } from 'next/router';
 import useVideo from '@/hooks/useVideo';
 import EmptyContent from './playlist/EmptyContent';
+import { Card, CardHeader, CardTitle, CardDescription } from './ui/card';
 
 interface ContentListProps {
   myPlaylists: boolean
@@ -53,6 +54,16 @@ const ContentList: React.FC<ContentListProps> = ({ playlistId,videoSearch, myPla
       }
     };
   if(videoList.length===0){
+    if (videoSearch){
+      return(<>
+      <Card className="w-full max-w-3xl mx-auto bg-zinc-800 text-background border-0">
+            <CardHeader className="text-center">
+                <CardTitle className="text-2xl font-bold">No matches for "{videoSearch}"</CardTitle>
+                <CardDescription>Try again using a different keyword</CardDescription>
+            </CardHeader>
+      </Card>
+      </>)
+    }
     return (
       <EmptyContent playlistId={playlistId}/>
     )
