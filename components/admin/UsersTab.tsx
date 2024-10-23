@@ -70,20 +70,21 @@ export default function UsersTab() {
                       src={user.image}
                       width="100"
                     />
-                  </TableCell> <TableCell className="font-semibold">
-                    {user.name}
+                  </TableCell> 
+                  <TableCell className="font-semibold">
+                    <span>{user.name}</span>
                   </TableCell>
                   <TableCell className="font-medium">
-                   <div> {new Date(user.createdAt).toDateString()}</div>
+                    <span> {new Date(user.createdAt).toDateString()}</span>
                   </TableCell>
                   <TableCell className="font-medium w-80">
-                    <div>{new Date(user.updatedAt).toDateString()}</div>
+                    <span>{new Date(user.updatedAt).toDateString()}</span>
                   </TableCell>
                   <TableCell className="font-medium w-80">
                     {user.role}                          
                   </TableCell>
                   <TableCell>
-                  {user.role !== UserRoleEnum.ADMIN && 
+                  {user.role !== UserRoleEnum.ADMIN &&
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <Button

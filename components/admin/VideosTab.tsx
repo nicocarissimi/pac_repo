@@ -25,9 +25,12 @@ export const VideosTab = () => {
     const { data: videos=[], mutate } = useVideo()
     const [videoList, setVideoList] = useState([])
 
-    useEffect(()=>{
-        setVideoList(videos)
-    },[videos])
+    useEffect(() => {
+      // Check if the new playlists are different before setting state
+      if (JSON.stringify(videos) !== JSON.stringify(videoList)) {
+          setVideoList(videos);
+      }
+    }, [videos, videoList]); 
 
     const handleInputSearch = (item: React.ChangeEvent<HTMLInputElement>) => {
         if (item.target.value.length > 0) {
@@ -88,6 +91,7 @@ export const VideosTab = () => {
                       height="100"
                       src={video.thumbnailUrl}
                       width="100"
+                      priority
                     />
                   </TableCell>
                   <TableCell className="font-medium">

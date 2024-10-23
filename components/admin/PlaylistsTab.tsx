@@ -7,7 +7,7 @@ import { Button } from "../ui/button"
 import { MoreHorizontal } from "lucide-react"
 import { useEffect, useState } from "react"
 import usePlaylist from "@/hooks/usePlaylist"
-import { PlaylistInterface } from "@/libs/definitions"
+import { PlaylistInterface, PlaylistWithVideoInterface, VideoInterface } from "@/libs/definitions"
 import PlaylistModal from "./PlaylistModal"
 import axios from "axios"
 import useCreateEditPlaylistDialog from "@/hooks/admin/useCreateEditPlaylistDialog"
@@ -18,9 +18,12 @@ export const PlaylistsTab = () => {
     const { data: playlists=[], mutate } = usePlaylist(false, undefined, undefined, true)
     const [playlistsList, setPlaylistsList] = useState([] as PlaylistInterface[])
     
-    useEffect(()=>{
-        setPlaylistsList(playlists)
-    },[playlists])
+    useEffect(() => {
+      // Check if the new playlists are different before setting state
+      if (JSON.stringify(playlists) !== JSON.stringify(playlistsList)) {
+          setPlaylistsList(playlists);
+      }
+    }, [playlists, playlistsList]); 
 
 
     const handleInputSearch = (item: React.ChangeEvent<HTMLInputElement>) => {
@@ -28,16 +31,27 @@ export const PlaylistsTab = () => {
           playlist.name.toLowerCase().includes(item.target.value.toLowerCase())
     ))
     }
+       
+    const handleCreateNewPlaylist = async(value: {title:string, videos:[{url: string}], propaedeutic: boolean}) => {
+      const playlist = {} as PlaylistWithVideoInterface
+      playlist.name = value.title;
+      playlist.propaedeutic = value.propaedeutic
+      playlist.isPublic = true
+      const newPlaylist = await axios.post('/api/playlist', { playlist }).then(res => res.data)
+      const videos = await axios.get('/api/videos', {params: {videoUrl: value.videos.map(video => video.url) }}).then(res=>res.data)
+      const videoIds = videos.map((video: VideoInterface) => video.id)
+      await axios.post(`/api/playlist/${newPlaylist.id}`, {videoIds: videoIds} )
+      mutate()
+    }
 
-        
-    const handleCreateNewPlaylist = async(value: PlaylistInterface) => {
-      await axios.post('/api/playlist', { value })
+    const handleDeletePlaylist = async( id: string ) => {
+      await axios.delete(`/api/playlist/${id}`)
       mutate()
     }
 
     return (
       <>
-        <PlaylistModal onSubmitCallback={(value) => {}} />
+      <PlaylistModal onSubmitCallback={(value) => handleCreateNewPlaylist(value)} />
         <Card x-chunk="dashboard-06-chunk-0">
         <CardHeader>
           <CardTitle>Playlists</CardTitle>
@@ -55,6 +69,7 @@ export const PlaylistsTab = () => {
                 </TableHead>
                 <TableHead>Name</TableHead>
                 <TableHead>Videos</TableHead>
+                <TableHead>Propaedeutic</TableHead>
                 <TableHead>
                   <span className="sr-only">Actions</span>
                 </TableHead>
@@ -70,6 +85,7 @@ export const PlaylistsTab = () => {
                     height="100"
                     src={playlist.thumbnailUrl}
                     width="100"
+                    priority
                   />
                 </TableCell>
                 <TableCell>
@@ -81,6 +97,9 @@ export const PlaylistsTab = () => {
                       <Badge key={title}>{title}</Badge>
                     ))}
                   </div>
+                </TableCell>
+                <TableCell>
+                  {playlist.propaedeutic.toString()}
                 </TableCell>
                 <TableCell>
                   <DropdownMenu>
@@ -95,8 +114,9 @@ export const PlaylistsTab = () => {
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                      <DropdownMenuItem onClick={()=> openModal(playlist)}>Edit</DropdownMenuItem>
-                      <DropdownMenuItem>Delete</DropdownMenuItem>
+                      <DropdownMenuItem onClick={()=>{
+                        openModal(playlist)}}>Edit</DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => handleDeletePlaylist(playlist.id!)}>Delete</DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </TableCell>
