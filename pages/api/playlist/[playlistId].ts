@@ -1,5 +1,4 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { getSession } from 'next-auth/react';
 import prismadb from '@/libs/prismadb'; // Assuming you have Prisma set up
 import serverAuth from '@/libs/serverAuth';
 
@@ -79,16 +78,18 @@ async function handleGet(req: NextApiRequest, res: NextApiResponse) {
   }
 }
 
-// Handle POST request
+// Handle POST request -> add one or more videos to a specific playlist
 async function handlePost(req: NextApiRequest, res: NextApiResponse) {
   const { playlistId } = req.query;
-  const { videoId } = req.body;
+  const { videoIds } = req.body;
 
   try {
     const existingEntry = await prismadb.videosInPlaylists.findFirst({
       where: {
         playlistId: playlistId as string,
-        videoId: videoId as string,
+        videoId: {
+          in: videoIds
+        }
       },
     });
 
@@ -96,11 +97,11 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
       return res.status(409).json({ message: 'Video is already in the playlist' });
     }
 
-    const videoInPlaylist = await prismadb.videosInPlaylists.create({
-      data: {
+    const videoInPlaylist = await prismadb.videosInPlaylists.createMany({
+      data: videoIds.map((id: string) => ({
+        videoId: id as string,
         playlistId: playlistId as string,
-        videoId: videoId as string,
-      },
+      })),
     });
 
     return res.status(201).json(videoInPlaylist);
@@ -151,7 +152,7 @@ async function handleDelete(req: NextApiRequest, res: NextApiResponse, userId: s
   }
 }
 
-// Handle PUT request
+// Handle PUT request -> edit playlist
 async function handlePut(req: NextApiRequest, res: NextApiResponse, userId: string) {
   const { playlistId } = req.query;
   const { name, isPublic } = req.body;
