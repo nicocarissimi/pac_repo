@@ -32,8 +32,13 @@ export interface PlaylistInterface {
   userId?: string;
   name: string;
   isPublic: boolean;
+  propaedeutic: boolean;
   thumbnailUrl: string;
   videos_title?: string[]
+}
+
+export interface PlaylistWithVideoInterface extends Omit<PlaylistInterface,'videos_title'>{
+  videos: VideoInterface[]
 }
 
 export interface UserInterface {
