@@ -3,6 +3,7 @@ export interface VideoInterface {
     title: string;
     description: string;
     thumbnailUrl: string;
+    author: string;
     videoUrl: string;
     duration: number | undefined;
     categories:  CategoryInterface[]
@@ -19,6 +20,7 @@ export function defaultVideo(): VideoInterface {
     title: "",
     description: "",
     thumbnailUrl: "",
+    author: "",
     videoUrl: "",
     duration: undefined,
     categories: [{name:""}]
@@ -26,7 +28,7 @@ export function defaultVideo(): VideoInterface {
 }
 
 export interface PlaylistInterface {
-  id: string;
+  id?: string;
   userId?: string;
   name: string;
   isPublic: boolean;

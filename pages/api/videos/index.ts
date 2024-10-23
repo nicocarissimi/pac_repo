@@ -31,7 +31,6 @@ async function GET() {
 async function POST(item: VideoInterface) {
 
     const existingVideo = await prismadb.video.findFirst({ where: { videoUrl: item.videoUrl}, select: {categories: { select: { category: true}}}})
-
     
     const fetchSelectedCategories = async() => { 
       const categories = await prismadb.category.findMany({
@@ -65,6 +64,7 @@ async function POST(item: VideoInterface) {
             description: item.description,
             thumbnailUrl: item.thumbnailUrl,
             videoUrl: item.videoUrl,
+            author: item.author,
             categories: {
               create: categoriesToAdd.map(c => ({category:{ connect:{ id: c.id }}})),
               deleteMany: categoriesToRemove.map(item => ({ categoryId: item.id }))
@@ -90,10 +90,11 @@ async function POST(item: VideoInterface) {
           description: item.description,
           videoUrl: item.videoUrl,
           thumbnailUrl: item.thumbnailUrl,
+          author: item.author,
           categories: {
             create: await categoryIds()
           },
-          duration: item.duration
+          duration: item.duration!
         }
       })  
       

@@ -41,9 +41,12 @@ model Video {
   description   String
   videoUrl      String @unique
   thumbnailUrl  String
+  author        String
   categories    VideosInCategories[]
   duration      Float
   playlist      VideosInPlaylists[]
+
+  @@unique([title, author])
 }
 
 model User {

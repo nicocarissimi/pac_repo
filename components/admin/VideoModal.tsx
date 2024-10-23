@@ -34,6 +34,9 @@ const formSchema = z.object({
       },
       {message: "Insert valid duration value in minutes. You can specify maximum two significative values"
     }),
+  author: z.string().min(1, {
+    message: "Author must be specified"
+  }),
   videoUrl: z.string().refine((url) => {
       return url.startsWith('http://') || url.startsWith('https://');
     }, {
@@ -45,7 +48,39 @@ const formSchema = z.object({
   message: "Thumbnail Url must contains a valid url. Futhermore allowed protocol is just https"
   }),
   categories: z.array(categorySchema).nonempty({ message: "Please select at least one category"})
+}).superRefine(async(data,ctx) => {
+  const { title, author}  = data
+  const exists = await checkIfAuthorExists(title,author);
+
+  if(exists) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: "Combination title and author already exists",
+      path: ["title"],
+    })
+  }
 })
+
+const checkIfAuthorExists = async (title: string, author: string) => {
+  try {
+    const response = await fetch('/api/videos/check', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ title, author }),
+    });
+
+    const data = await response.json();
+    return data.exists;
+  } catch (error) {
+    console.error("API call error", error);
+    return false;
+  }
+};
+
+
+
 
 
 type VideoModalProps = {
@@ -98,10 +133,14 @@ const VideoModal = ({onSubmitCallback}: VideoModalProps) => {
 
 
   async function onSubmit(value: z.infer<typeof formSchema>) {
-    if(onSubmitCallback){
-      onSubmitCallback(value)
-    } 
-    closeModal()
+    try {
+      if (onSubmitCallback) {
+          onSubmitCallback(value); // Await the callback to ensure completion before closing
+      }
+      closeModal(); // Only run this if the callback succeeds
+    } catch (e) {
+      console.error('eccomiiii', e); // Log the error for debugging
+    }
   }
 
   return (
@@ -136,6 +175,19 @@ const VideoModal = ({onSubmitCallback}: VideoModalProps) => {
               <FormLabel>Description</FormLabel>
               <FormControl>
                 <Input placeholder="Insert description..." {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+         <FormField
+          control={form.control}
+          name="author"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Author</FormLabel>
+              <FormControl>
+                <Input placeholder="Insert author..." {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>

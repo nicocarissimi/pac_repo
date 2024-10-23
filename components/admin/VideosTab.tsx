@@ -40,8 +40,8 @@ export const VideosTab = () => {
 
     
     const handleCreateNewVideo = async(value: VideoInterface) => {
-        await axios.post('/api/videos', { value })
-        mutate()
+        await axios.post('/api/videos', { value }); 
+        mutate(); 
     }
 
     const handleDeleteVideo = async(videoId: string) => {
@@ -55,9 +55,9 @@ export const VideosTab = () => {
         <VideoModal onSubmitCallback={(value) => handleCreateNewVideo(value)} />
             <Card x-chunk="dashboard-06-chunk-0">
           <CardHeader>
-            <CardTitle>Contents</CardTitle>
+            <CardTitle>Videos</CardTitle>
             <CardDescription>
-              Manage all contents within action sphere
+              Manage all videos within action sphere
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -70,6 +70,7 @@ export const VideosTab = () => {
                   </TableHead>
                   <TableHead>Title</TableHead>
                   <TableHead>Description</TableHead>
+                  <TableHead>Author</TableHead>
                   <TableHead>Duration</TableHead>
                   <TableHead>Categories</TableHead>
                   <TableHead>
@@ -94,6 +95,9 @@ export const VideosTab = () => {
                   </TableCell>
                   <TableCell className="font-medium w-80">
                     {video.description}                          
+                  </TableCell>
+                  <TableCell className="font-medium w-80">
+                    {video.author}                          
                   </TableCell>
                   <TableCell className="hidden md:table-cell">
                     {video.duration}
