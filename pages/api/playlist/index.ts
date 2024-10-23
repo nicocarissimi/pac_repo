@@ -31,8 +31,8 @@ async function getPlaylist(
   currentUserId:string) {
   try {
     const searchValue = req.query.search ? String(req.query.search) : undefined;
-    const infoVideo = Boolean(req.query.infoVideo);
-    const isHot = Boolean(req.query.hot);
+    const infoVideo = req.query.infoVideo === "true";
+    const isHot = req.query.hot === "true";
     const videoId = req.query.videoId ? String(req.query.videoId) : undefined;
 
     // Build common query conditions for all cases
@@ -57,7 +57,10 @@ async function getPlaylist(
           videos: {
             include: {
               video: {
-                select: { thumbnailUrl: true },
+                select: {
+                  thumbnailUrl: true,
+                  title: infoVideo 
+                },
               },
             },
           },
@@ -65,12 +68,18 @@ async function getPlaylist(
       });
 
       // Map response to include thumbnailUrl from the first video
-      const response = playlists.map(({ videos, ...rest }) => ({
-        ...rest,
-        thumbnailUrl: videos[0]?.video.thumbnailUrl,
-      }));
+      const response = playlists.map(({ videos, ...rest }) => {
+        const p: any = ({...rest,
+        thumbnailUrl: videos[0]?.video.thumbnailUrl})
+        if(infoVideo){
+          p.videos_title = videos.map(video => video.video.title)
+        }
+        return p
+      });
 
       return res.status(200).json(response);
+
+
     } else {
       // Handle public playlists (hot flag is set)
       queryConditions.isPublic = true;
@@ -91,11 +100,11 @@ async function getPlaylist(
       });
 
       // Map response to include thumbnailUrl and optionally title
-      const response = playlists.map(({ videos, ...rest }) => ({
-        ...rest,
-        thumbnailUrl: videos[0]?.video.thumbnailUrl,
-        ...(infoVideo && { title: videos[0]?.video.title }),
-      }));
+      const response = playlists.map(({ videos, ...rest }) => {
+        const p: any = ({...rest,
+        thumbnailUrl: videos[0]?.video.thumbnailUrl})
+        return p
+      });
 
       return res.status(200).json(response);
     }
@@ -111,12 +120,13 @@ async function createPlaylist(
   currentUserId:string
 ) {
   try {
-    const { Playlist } = req.body;
+    const { playlist } = req.body;
     const newPlaylist = await prismadb.playlist.create({
       data: {
-        name: Playlist.name,
+        name: playlist.name,
         userId: currentUserId,
-        isPublic: Playlist.isPublic,
+        isPublic: playlist.isPublic,
+        propaedeutic: playlist.propaedeutic
       },
     });
 
@@ -134,15 +144,14 @@ async function updatePlaylist(
 ) {
   try {
     
-    const { Playlist } = req.body;
-
+    const { playlist } = req.body;
 
     const updatedPlaylist = await prismadb.playlist.update({
-      where: { id: Playlist.id },
+      where: { id: playlist.id },
       data: {
-        name: Playlist.name,
+        name: playlist.name,
         userId: currentUserId,
-        isPublic: Playlist.isPublic,
+        isPublic: playlist.isPublic,
       },
     });
 
