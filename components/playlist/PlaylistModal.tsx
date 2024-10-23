@@ -32,11 +32,11 @@ const PlaylistModal: React.FC<PlaylistModalProps> = ({
     try {
       if(!playlist){
         await axios.post('/api/playlist', {
-          Playlist
+          Playlist: playlist
         })
       }else{
         await axios.put('/api/playlist', {
-          Playlist
+          Playlist: playlist
         })
       }
     }

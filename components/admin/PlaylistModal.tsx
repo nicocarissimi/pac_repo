@@ -10,15 +10,17 @@ import { MultiSelect } from "../ui/multiselect";
 import useVideo from "@/hooks/useVideo";
 import { useEffect, useState } from "react";
 import { VideoInterface } from "@/libs/definitions";
+import { Checkbox } from "../ui/checkbox";
 
 
 const videoSchema = z.object({
-    name: z.string()
+    url: z.string()
 })
 
 
 const formSchema = z.object({
-    title: z.string(),   
+    title: z.string().min(1,{message: "Please insert title"}),   
+    propaedeutic: z.boolean().default(false),
     videos: z.array(videoSchema).nonempty({message: "Playlist can't be empty"})
   })
 
@@ -31,13 +33,13 @@ export default function PlaylistModal({onSubmitCallback}: PlaylistModalProps)  {
     const { playlist, isOpen, closeModal } = useCreateEditPlaylistDialog()
     const { data = []} = useVideo()
 
-    const [allVideos, setAllVideos] = useState([{ label:"", value:"" }])
+    const [allVideos, setAllVideos] = useState([{ label:"", value:""}])
 
     useEffect(() => {
         const videos = data.map((d: VideoInterface) => {
           return {
             "label": d.title,
-            "value": d.title
+            "value": d.videoUrl
           }
         })
     
@@ -52,6 +54,7 @@ export default function PlaylistModal({onSubmitCallback}: PlaylistModalProps)  {
         form.reset({title: playlist.name, videos: data.map((video: VideoInterface) => video.title)})
     } else {
         form.reset()
+        form.clearErrors()
     }
     },[playlist])
 
@@ -61,13 +64,20 @@ export default function PlaylistModal({onSubmitCallback}: PlaylistModalProps)  {
 
     const handleClose = () => {
         closeModal()
+        form.reset()
+        form.clearErrors()
     }
 
     async function onSubmit(value: z.infer<typeof formSchema>) {
-        if(onSubmitCallback){
-          onSubmitCallback(value)
-        } 
-        closeModal()
+        try{
+            if(onSubmitCallback){
+                onSubmitCallback(value)
+            } 
+            handleClose()
+        }catch(e) {
+            console.error(e)
+        }
+        
     }
 
     return (
@@ -94,6 +104,7 @@ export default function PlaylistModal({onSubmitCallback}: PlaylistModalProps)  {
                 </FormItem>
                 )}
             />
+            
             <FormField
                 control={form.control}
                 name="videos"
@@ -105,8 +116,9 @@ export default function PlaylistModal({onSubmitCallback}: PlaylistModalProps)  {
                     <MultiSelect
                         options={allVideos}
                         placeholder="Select videos"
+                        defaultValue={playlist ? playlist.videos_title : undefined}
                         onValueChange={(selectedValues) => {
-                        const videos = selectedValues.map(value => ({"name":value}));
+                        const videos = selectedValues.map(value => ({"url": value}));
                         field.onChange(videos);
                         }}             
                         variant="inverted"
@@ -118,6 +130,26 @@ export default function PlaylistModal({onSubmitCallback}: PlaylistModalProps)  {
                 </FormItem>
                 )}
             />
+             <FormField
+                    control={form.control}
+                    name="propaedeutic"
+                    render={({ field: { value, onChange }}) => (
+                        <FormItem>
+                            <FormControl>
+                            <div className="flex items-center space-x-2">
+                                <Checkbox id="terms" checked={value} onCheckedChange={onChange}/>
+                                <label
+                                    htmlFor="terms"
+                                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                >
+                                    Propaedeutics Playlist
+                                </label>
+                                </div>    
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
             <div className='w-full flex justify-end gap-2'>
                 <Button variant={'outline'} onClick={handleClose}> Close </Button>
                 <Button type="submit" className='items-end'>Submit</Button>
