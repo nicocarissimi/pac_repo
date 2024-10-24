@@ -28,6 +28,7 @@ const PlaylistModal: React.FC<PlaylistModalProps> = ({
       name: playlistName,
       isPublic,
       id: playlist? playlist.id : null,
+      propaedeutic: false,
     };
     try {
       if(!playlist){
