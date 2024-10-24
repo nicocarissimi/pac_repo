@@ -107,7 +107,7 @@ export const VideosTab = () => {
                     {video.duration}
                   </TableCell>
                   <TableCell className="hidden md:table-cell">
-                    <div className='flex gap-2'>
+                    <div className='flex gap-2 flex-wrap'>
                       {video.categories.map(item => 
                           <Badge key={item.name}>{item.name}</Badge>
                       )}
