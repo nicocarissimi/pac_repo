@@ -15,7 +15,7 @@ interface PlaylistDisplayProps {
 
 const AddVideoPlaylist: React.FC<PlaylistDisplayProps> = ({ videoId, closePlaylistModal }) => {
 
-  const { data: playlist = [] } = usePlaylist(true, videoId) as { data: PlaylistInterface[] };
+  const { data: playlist = [] } = usePlaylist(false, videoId) as { data: PlaylistInterface[] };
   const [ selectedPlaylist, setSelectPlaylist ] = useState({} as PlaylistInterface);
 
   useEffect(() => {
@@ -27,7 +27,7 @@ const AddVideoPlaylist: React.FC<PlaylistDisplayProps> = ({ videoId, closePlayli
   const handleAddVideo = useCallback(async () => {
     try {
       await axios.post(`/api/playlist/${selectedPlaylist.id}`, {
-        videoId
+        videoIds: [videoId]
       });
     } catch (error) {
       if (axios.isAxiosError(error)) {

@@ -64,6 +64,17 @@ const ContentList: React.FC<ContentListProps> = ({ playlistId,videoSearch, myPla
       </Card>
       </>)
     }
+    console.log(playlistId)
+    if (playlistId==='0'){
+      return(<>
+      <Card className="w-full max-w-3xl mx-auto bg-zinc-800 text-background border-0">
+            <CardHeader className="text-center">
+                <CardTitle className="text-2xl font-bold">We couldn't find anything</CardTitle>
+                <CardDescription>Try selecting another playlist or change the search term</CardDescription>
+            </CardHeader>
+      </Card>
+      </>)
+    }
     return (
       <EmptyContent playlistId={playlistId}/>
     )

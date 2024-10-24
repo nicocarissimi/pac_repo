@@ -48,7 +48,7 @@ const Home = () => {
         <Billboard />
         <div ref={targetRef} className="pb-40">
           <VideoList title="Trending Now" data={videos} />
-          <VideoList title="My List" data={favorites} />
+          {/*<VideoList title="My List" data={favorites} /> */}
         </div>
     </RootLayout>
   )

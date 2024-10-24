@@ -33,7 +33,7 @@ const SidebarList: React.FC<PlaylistDisplayProps> = ({ myPlaylists, playlistId, 
   const [showModal, setShowModal] = useState(false);
   const [playlistName, setPlaylistName] = useState('');
   const [isPublic, setIsPublic] = useState(true);
-  const { data: playlist = [] } = usePlaylist(myPlaylists, '', playlistSearch) as { data: PlaylistInterface[] };
+  const { data: playlist = [] } = usePlaylist(!myPlaylists, '', playlistSearch) as { data: PlaylistInterface[] };
   const [playlistFiltered, setPlaylist] = useState([] as PlaylistInterface[]) 
   const [ selectedPlaylist, setSelectPlaylist ] = useState({} as PlaylistInterface);
 
@@ -59,7 +59,7 @@ const SidebarList: React.FC<PlaylistDisplayProps> = ({ myPlaylists, playlistId, 
 
   const handleShowPlaylistContent = (playlist: PlaylistInterface) => {
     if (setPlaylistId) {
-      setPlaylistId(playlist.id);
+      setPlaylistId(playlist.id!);
     }
   };
 
@@ -85,7 +85,7 @@ const SidebarList: React.FC<PlaylistDisplayProps> = ({ myPlaylists, playlistId, 
     await mutate('/api/playlist');
     await mutate(`/api/playlist/${selectedPlaylist.id}`)
     if(playlist.length > 0){
-      setPlaylistId!(playlist[0].id);
+      setPlaylistId!(playlist[0].id!);
     }   
   },[selectedPlaylist]);
 
@@ -135,7 +135,7 @@ const SidebarList: React.FC<PlaylistDisplayProps> = ({ myPlaylists, playlistId, 
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                      <DropdownMenuItem data-testid="edit-button" asChild onClick={() => handleEditPlaylist(playlist.id, playlist.name, playlist.isPublic)}>
+                      <DropdownMenuItem data-testid="edit-button" asChild onClick={() => handleEditPlaylist(playlist.id!, playlist.name, playlist.isPublic)}>
                         <div className="relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors focus:bg-acc focus:text-accent-foreground">
                           <Edit className="mr-2 h-4 w-4"/>
                           <span>Edit</span>
@@ -173,7 +173,7 @@ const SidebarList: React.FC<PlaylistDisplayProps> = ({ myPlaylists, playlistId, 
       </ScrollArea>
       {showModal && (
         <PlaylistModal
-          playlist={{ id: selectedPlaylist.id, name: playlistName, isPublic: isPublic, thumbnailUrl: ''}}
+          playlist={{ id: selectedPlaylist.id, name: playlistName, isPublic: isPublic, thumbnailUrl: '', propaedeutic: false}}
           onClose={handleCloseModal}
         />
       )}

@@ -12,7 +12,7 @@ const usePlaylist = (hot: boolean, videoId?:string | undefined, searchTerm?: str
   infoVideo && params.set('infoVideo', infoVideo.toString())
   searchTerm && params.set('search', searchTerm)
   
-  const finalUrl = params.size >0? `${apiUrl}?${params.toString()}`: apiUrl;
+  const finalUrl = (params.size ===1 && !hot)? apiUrl:`${apiUrl}?${params.toString()}`;
   const { data, error, isLoading, mutate } = useSwr(finalUrl, fetcher, {
     revalidateOnFocus: false,
     revalidateOnReconnect: false,

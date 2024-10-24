@@ -18,7 +18,7 @@ const EmptyContent: React.FC<EmptyContentProps> = ({playlistId}) => {
     const handleAddVideo = useCallback(async (videoId:string) => {
         try {
           await axios.post(`/api/playlist/${playlistId}`, {
-            videoId
+            videoIds: [videoId]
           }).then(() => {
                 
               });
