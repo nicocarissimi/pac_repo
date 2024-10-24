@@ -86,11 +86,14 @@ const VideoCard: React.FC<VideoCardProps> = ({ data }) => {
           <p className="text-green-400 font-semibold mt-4">
             New <span className="text-white">2023</span>
           </p>
+          <div className="flex flex-row mt-4 gap-2 items-center text-white"> 
+            <p>{data.title}</p>
+          </div>
           <div className="flex flex-row mt-4 gap-2 items-center"> 
-            <p className="text-white text-[10px] lg:text-sm">{data.duration}</p>
+            <p className="text-white text-[10px] lg:text-sm">{data.description}</p>
           </div>
           <div className="flex flex-row items-center gap-2 mt-4 text-[8px] text-white lg:text-sm">
-            <p>CATEGORIE</p>
+            <div>{data.duration} (min)</div>
           </div>
         </div>
       </div>
