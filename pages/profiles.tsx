@@ -2,6 +2,7 @@ import { useRouter } from "next/router";
 import { useCallback } from "react";
 
 import useCurrentUser from "@/hooks/useCurrentUser";
+import axios from "axios";
 
 interface UserCardProps {
   name: string;
@@ -24,8 +25,28 @@ const App = () => {
   const router = useRouter();
   const { data: currentUser } = useCurrentUser();
 
-  const selectProfile = useCallback(() => {
-    router.push('/');
+  const preferenceCompleted = async()=>{
+    try{
+    const res = await axios.get('/api/preferences').then(res=>{
+      console.log(res.data.categories.length !== 0)
+      return res.data.categories.length !== 0
+    })
+    return res
+  }catch(error){
+    return false
+  }
+    
+  }
+  const selectProfile = useCallback(async() => {
+    const option = await preferenceCompleted();
+    console.log(option)
+    if(option ){
+      router.push('/');
+    }
+    else{
+      router.push('/preferences');
+    }
+    
   }, [router]);
 
   return (
