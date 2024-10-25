@@ -61,7 +61,7 @@ model User {
   favoriteCategories UsersInCategories[]
   emailVerified DateTime?
   accounts Account[]
-  learning_time Int
+  learning_time Int?
   role String
 }
 

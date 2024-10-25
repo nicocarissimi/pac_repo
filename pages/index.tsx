@@ -8,29 +8,19 @@ import useInfoModalStore from '@/hooks/useInfoModalStore';
 import RootLayout from '../components/layout';
 import useVideo from '@/hooks/useVideo';
 import PlaylistContentModal from '@/components/playlist/ContentModal';
-
-// export async function getServerSideProps(context: NextPageContext) {
-//   const session = await getSession(context);
-
-//   if (!session) {
-//     return {
-//       redirect: {
-//         destination: '/auth',
-//         permanent: false,
-//       }
-//     }
-//   }
-
-//   return {
-//     props: {}
-//   }
-// }
+import useCategories from '@/hooks/useCategories';
+import { CategoryInterface, Role, VideoInterface } from '@/libs/definitions';
+import useSuggestedVideo from '@/hooks/useSuggestedVideo';
+import useCurrentUser from '@/hooks/useCurrentUser';
 
 const Home = () => {
   const { data: videos = [] } = useVideo();
   const { data: favorites = [] } = useFavorites();
   const {isOpen, closeModal} = useInfoModalStore();
+  const { data: categories=[]} = useCategories();
+  const { data: suggestedVideo} = useSuggestedVideo()
   const targetRef = useRef<HTMLDivElement>(null);
+  const { data: user } = useCurrentUser()
 
   const [searchValue, setSearchValue] = useState<string>();
 
@@ -41,14 +31,23 @@ const Home = () => {
     setSearchValue(value)
   }
 
+
+
   return (
     <RootLayout>
+        <div className='text-red-600 text-2xl'>{user?.role}</div>
         <InfoModal visible={isOpen} onClose={closeModal} />
         <PlaylistContentModal />
         <Billboard />
         <div ref={targetRef} className="pb-40">
-          <VideoList title="Trending Now" data={videos} />
-          {/*<VideoList title="My List" data={favorites} /> */}
+          { user?.role === Role.ADMIN &&
+            <VideoList title="Suggested Video" data={suggestedVideo} />
+          }
+          <VideoList title="My List" data={favorites} />
+          { categories.map((category: CategoryInterface) => {
+            const selectedVideo = videos.filter((video: VideoInterface) => video.categories.map((c) => c.name).includes(category.name))
+            return <VideoList key={category.name} title={category.name} data={selectedVideo} />
+          }) }
         </div>
     </RootLayout>
   )
