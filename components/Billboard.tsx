@@ -22,7 +22,7 @@ const Billboard: React.FC = () => {
         <p className="text-white text-1xl md:text-5xl h-full w-[60%] lg:text-6xl font-bold drop-shadow-xl">
           {data?.title}
         </p>
-        <p className="text-white text-[8px] md:text-lg mt-3 md:mt-8 w-[90%] md:w-[80%] lg:w-[50%] drop-shadow-xl overflow-hidden max-h-[300px]">
+        <p className="text-white text-[8px] md:text-lg mt-3 md:mt-8 w-[90%] md:w-[80%] lg:w-[80%] drop-shadow-xl overflow-hidden xs:line-clamp-2 lg:line-clamp-6">
           {data?.description}
         </p>
         <div className="flex flex-row items-center mt-3 md:mt-4 gap-3">
