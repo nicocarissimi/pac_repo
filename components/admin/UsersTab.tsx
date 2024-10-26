@@ -15,11 +15,17 @@ export default function UsersTab() {
     const { data: users=[], mutate } = useUsers()
     const [usersList, setUsersList] = useState(users)
 
-    useEffect(()=>{
-        setUsersList(users)
-    },[users])
+    useEffect(() => {
+      // Check if the new playlists are different before setting state
+      if (JSON.stringify(users) !== JSON.stringify(usersList)) {
+          setUsersList(users);
+      }
+    }, [users]); 
 
-    const handleInputSearch = () => {}
+    const handleInputSearch = (item: React.ChangeEvent<HTMLInputElement>) => {
+        setUsersList(users.filter((user: UserInterface) => 
+        user.name.toLowerCase().includes(item.target.value.toLowerCase())))
+    }
 
     const handlePromotion = async(id: string) => {
       await axios.post('/api/users', {id})

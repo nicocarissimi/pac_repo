@@ -30,7 +30,7 @@ export const VideosTab = () => {
       if (JSON.stringify(videos) !== JSON.stringify(videoList)) {
           setVideoList(videos);
       }
-    }, [videos, videoList]); 
+    }, [videos]); 
 
     const handleInputSearch = (item: React.ChangeEvent<HTMLInputElement>) => {
         if (item.target.value.length > 0) {

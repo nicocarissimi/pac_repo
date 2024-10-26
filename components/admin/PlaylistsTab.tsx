@@ -23,7 +23,7 @@ export const PlaylistsTab = () => {
       if (JSON.stringify(playlists) !== JSON.stringify(playlistsList)) {
           setPlaylistsList(playlists);
       }
-    }, [playlists, playlistsList]); 
+    }, [playlists]); 
 
 
     const handleInputSearch = (item: React.ChangeEvent<HTMLInputElement>) => {
