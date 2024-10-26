@@ -173,7 +173,7 @@ export default function DramaPreferences() {
           </p>
           <ScrollArea className="h-[350px] w-full rounded-md overflow-y-auto p-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
-              {dramaTechniques.map((technique: CategoryInterface) => (
+              {dramaTechniques?.map((technique: CategoryInterface) => (
                 <Card
                   key={technique.id}
                   className={`cursor-pointer transition-all text-background bg-zinc-800 hover:bg-zinc-600 border-0 ${

@@ -4,14 +4,18 @@ import prismadb from '@/libs/prismadb';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     try {
-        const { currentUser } = await serverAuth(req);
+        let userId = req.query.userId as string
+        if(!userId){
+            const { currentUser } = await serverAuth(req);
+            userId = currentUser.id
+        }
         
         switch (req.method) {
             case 'GET':
-                await getPreferences(res, currentUser.id);
+                await getPreferences(res, userId);
                 break;
             case 'POST':
-                await addPreferences(req, res, currentUser.id);
+                await addPreferences(req, res, userId);
                 break;
             default:
                 res.status(405).json({ error: 'Method not allowed' });
@@ -31,6 +35,7 @@ async function getPreferences(
             id: currentUserId
         },
         select:{
+            role: true,
             learning_time: true
         }
     })
@@ -44,6 +49,7 @@ async function getPreferences(
     })
     const preferences = {
         learning_time: learning_time_obj?.learning_time,
+        role: learning_time_obj?.role,
         categories: categoryofInterest?.map(cateObj=> cateObj.categoryId)
     }
     return res.status(200).json(preferences);
@@ -54,6 +60,7 @@ async function addPreferences(
     res: NextApiResponse,
     currentUserId: string
 ) {
+    try{
     const {learning_time, categories} = (req.body)
     console.log(categories)
     console.log(req.body)
@@ -94,5 +101,10 @@ async function addPreferences(
             userId: currentUserId as string,
           })),
       })
+      // Cookie logic
+      res.setHeader('Set-Cookie', 'preferences=ok; Path=/; HttpOnly')
       return res.status(200).json(usersInCategories);
+    }catch(error){
+        console.log('Preferences settings not completed:', error)
+    }
 }
