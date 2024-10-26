@@ -50,6 +50,7 @@ export interface UserInterface {
   updatedAt: string;
   favoriteIds: string;
   playlists: string;
+  learning_time: number;
   favoriteCategories: CategoryInterface[]
   role: string
 }

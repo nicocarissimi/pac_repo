@@ -1,8 +1,8 @@
-import { CategoryInterface, VideoInterface } from "@/libs/definitions";
+import { CategoryInterface } from "@/libs/definitions";
 import serverAuth from "@/libs/serverAuth";
 import { NextApiRequest, NextApiResponse } from "next";
 
-async function GET(learning_time: number){
+async function GET(learning_time: number, favoriteCategories: string[] ){
         // candidates i a list of combinations so a list of list
         const solution = []
         // if duration > learning_time automatically video can't be inside a valid candidate
@@ -11,10 +11,32 @@ async function GET(learning_time: number){
             where: {
                 duration: {
                     lte: learning_time
+                },
+                categories: {
+                    some: {
+                        category: {
+                            name: {
+                                in: favoriteCategories
+                            }
+                        }
+                    }
                 }
             },
-            include: {
+            select: {
+                id: true,
+                title: true,
+                description: true,
+                thumbnailUrl: true,
+                videoUrl: true,
+                duration: true,
                 categories: {
+                    where: {
+                        category: {
+                            name: {
+                                in: favoriteCategories
+                            }
+                        }
+                    },
                     select: {
                         category: {
                             select: {
@@ -82,10 +104,14 @@ function candidateSelection(solution: any[], videos:  any[]){
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
 
     const {currentUser} = await serverAuth(req)
-
     if (req.method === 'GET') {
-        const videos = await GET(currentUser.learning_time ?? 0)
-        return res.status(200).json(videos)    
+        if(currentUser.learning_time && currentUser.learning_time > 0) {
+            const {favoriteCategories, learning_time} = currentUser
+            const categories = favoriteCategories.map(c=>c.category.name)
+            const videos = await GET(15, categories)
+            return res.status(200).json(videos)    
+        }
+        return res.status(200).json({})
     }
 
 }

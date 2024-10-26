@@ -13,6 +13,16 @@ const serverAuth = async (req: NextApiRequest) => {
   const currentUser = await prismadb.user.findUnique({
     where: {
       email: session.user.email,
+    },include:{
+      favoriteCategories: {
+        select:{
+          category: {
+            select:{
+              name: true
+            }
+          }
+        }
+      }
     }
   });
   

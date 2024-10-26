@@ -35,12 +35,11 @@ const Home = () => {
 
   return (
     <RootLayout>
-        <div className='text-red-600 text-2xl'>{user?.role}</div>
         <InfoModal visible={isOpen} onClose={closeModal} />
         <PlaylistContentModal />
         <Billboard />
         <div ref={targetRef} className="pb-40">
-          { user?.role === Role.ADMIN &&
+          { user?.role !== Role.ADMIN &&
             <VideoList title="Suggested Video" data={suggestedVideo} />
           }
           <VideoList title="My List" data={favorites} />
