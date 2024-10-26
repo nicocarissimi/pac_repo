@@ -38,9 +38,12 @@ export const PlaylistsTab = () => {
       playlist.propaedeutic = value.propaedeutic
       playlist.isPublic = true
       const newPlaylist = await axios.post('/api/playlist', { playlist }).then(res => res.data)
-      const videos = await axios.get('/api/videos', {params: {videoUrl: value.videos.map(video => video.url) }}).then(res=>res.data)
-      const videoIds = videos.map((video: VideoInterface) => video.id)
-      await axios.post(`/api/playlist/${newPlaylist.id}`, {videoIds: videoIds} )
+      console.log(value.videos.map(video => video.url))
+      const videos = await axios.post('/api/videos/get-ids', { videoUrl: value.videos.map(video => video.url)}).then(res=>res.data)
+      console.log(videos)
+      const videosId = videos.map((video: VideoInterface) => video.id)
+      console.log(videosId)
+      await axios.post(`/api/playlist/${newPlaylist.id}`, {videoIds: videosId} )
       mutate()
     }
 
@@ -91,11 +94,11 @@ export const PlaylistsTab = () => {
                 <TableCell>
                   {playlist.name}
                 </TableCell>
-                <TableCell>
-                  <div className='flex gap-2'>
+                <TableCell className="hidden md:table-cell">
+                  <div className='flex gap-2 flex-wrap'>
                     {playlist.videos_title?.map(title=> (
-                      <Badge key={title}>{title}</Badge>
-                    ))}
+                        <Badge key={title}>{title}</Badge>
+                      ))}
                   </div>
                 </TableCell>
                 <TableCell>

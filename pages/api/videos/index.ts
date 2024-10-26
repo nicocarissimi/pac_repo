@@ -103,28 +103,13 @@ async function POST(item: VideoInterface) {
 
 }
 
-async function getIds(videoUrl: string[]) {
-  const videoIds = await prismadb.video.findMany({
-    select: {
-      id: true
-    },
-    where:{
-      thumbnailUrl: {
-        in: videoUrl
-      }
-    }
-  })
-  return videoIds
-}
-
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
 
   await serverAuth(req)
 
   switch (req.method) {
     case 'GET': 
-        const { videoUrl } = req.body
-        const videos = videoUrl ? await getIds(videoUrl): await GET();
+        const videos =await GET();
         return res.status(200).json(videos)
     case 'POST': 
         const { value } = req.body;
