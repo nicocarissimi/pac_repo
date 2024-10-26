@@ -93,41 +93,43 @@ function evaluateSolution(videos: Video[], learning_time: number){
         total += maxCategoriesVideo.duration;
         solution.push(maxCategoriesVideo);
         maxCategoriesVideo.categories.forEach(category => includedCategories.add(category)); // Aggiungi categorie al Set
-        [videos[maxVideoIndex], videos[videos.length]] = [videos[videos.length], videos[maxVideoIndex]] 
+        [videos[maxVideoIndex], videos[videos.length-1]] = [videos[videos.length-1], videos[maxVideoIndex]] 
         videos.pop()
     }
 
     while (videos.length > 0 && total < learning_time) {
-        const selectedVideo = candidateSelection(videos, includedCategories);
-        if (selectedVideo && (selectedVideo.duration + total < learning_time)) {
+        const {index, video: selectedVideo} = candidateSelection(videos, includedCategories, total, learning_time);
+        if (selectedVideo) {
             total += selectedVideo.duration;
             solution.push(selectedVideo);
             selectedVideo.categories.forEach(category => includedCategories.add(category)); // Aggiungi nuove categorie
+            [videos[index], videos[videos.length-1]] = [videos[videos.length-1], videos[index]]
+            videos.pop()
+        }else{
+            break
         }
-        // Rimuovere il video selezionato dai video rimanenti
-        videos = videos.filter(video => video !== selectedVideo);
-
     }
-
     return solution;
-
 }
 
 // the candidates must satisfy duration condition and to have more categories than other candidates which aren't already in solution list
-function candidateSelection(videos: Video[], includedCategories: Set<string>) {
-    let maxVideo =  null;
+function candidateSelection(videos: Video[], includedCategories: Set<string>, total: number, learning_time:number) {
+    let maxVideo =  {} as {index: number, video: Video};
     let maxCount = 0;
     let minDuration = Infinity;
 
-    for (const video of videos) {
-        // Conta le categorie non incluse nella soluzione
-        const count = video.categories.filter(category => !includedCategories.has(category)).length;
-        
-        // Se il conteggio delle categorie è maggiore del massimo trovato
-        if (count > maxCount || (count === maxCount && video.duration < minDuration)) {
-            maxCount = count;
-            maxVideo = video;
-            minDuration = video.duration;
+    for (let k = 0; k<videos.length; k++) {
+        if(videos[k].duration + total < learning_time) {
+            // Conta le categorie non incluse nella soluzione
+            const count = videos[k].categories.filter(category => !includedCategories.has(category)).length;
+            
+            // Se il conteggio delle categorie è maggiore del massimo trovato
+            if (count > maxCount || (count === maxCount && videos[k].duration < minDuration)) {
+                maxCount = count;
+                maxVideo.index = k
+                maxVideo.video = videos[k];
+                minDuration = videos[k].duration;
+            }
         }
     }
 
