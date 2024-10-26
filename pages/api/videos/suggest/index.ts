@@ -1,4 +1,3 @@
-import { CategoryInterface, VideoInterface } from "@/libs/definitions";
 import serverAuth from "@/libs/serverAuth";
 import { NextApiRequest, NextApiResponse } from "next";
 
@@ -70,51 +69,69 @@ interface Video {
 
 
 function evaluateSolution(videos: Video[], learning_time: number){
-    const solution = []
+    const solution: Video[] = [];
+    let total = 0;
 
-    var total = 0
-    if(videos.length > 0) {
-        videos.sort((a,b) => a.categories.length - b.categories.length)[videos.length]
-        const video = videos.pop()
-        total += video!.duration
-        solution.push(video)
-    }
+    // Inizializza un Set per tracciare le categorie incluse nella soluzione
+    const includedCategories = new Set<string>();
 
+    // Trovare il video con il minor numero di categorie inizialmente
+    let maxCategoriesVideo = null;
+    let maxCategoriesCount = Infinity;
+    let maxVideoIndex = 0
 
-    while( videos.length > 0 && total < learning_time) {
-        // sort all candidates and choose the first one which has the most categories number
-        // once i selected the first candidates the algorithm must select the best candidates looking for the amount of category not already included in the solution list
-        const selectedVideo = candidateSelection(solution, videos)
-        if (selectedVideo.duration + total < learning_time) {
-            solution.push(selectedVideo)
-            total += selectedVideo.duration
+    for (let k=0; k<videos.length; k++) {
+        const categoriesCount = videos[k].categories.length;
+        if (categoriesCount > maxCategoriesCount) {
+            maxCategoriesCount = categoriesCount;
+            maxCategoriesVideo = videos[k];
+            maxVideoIndex = k
         }
-        videos = videos.filter(video => video !== selectedVideo)
     }
 
-    return solution
+    if (maxCategoriesVideo) {
+        total += maxCategoriesVideo.duration;
+        solution.push(maxCategoriesVideo);
+        maxCategoriesVideo.categories.forEach(category => includedCategories.add(category)); // Aggiungi categorie al Set
+        [videos[maxVideoIndex], videos[videos.length]] = [videos[videos.length], videos[maxVideoIndex]] 
+        videos.pop()
+    }
+
+    while (videos.length > 0 && total < learning_time) {
+        const selectedVideo = candidateSelection(videos, includedCategories);
+        if (selectedVideo && (selectedVideo.duration + total < learning_time)) {
+            total += selectedVideo.duration;
+            solution.push(selectedVideo);
+            selectedVideo.categories.forEach(category => includedCategories.add(category)); // Aggiungi nuove categorie
+        }
+        // Rimuovere il video selezionato dai video rimanenti
+        videos = videos.filter(video => video !== selectedVideo);
+
+    }
+
+    return solution;
 
 }
 
 // the candidates must satisfy duration condition and to have more categories than other candidates which aren't already in solution list
-function candidateSelection(solution: any[], videos:  any[]){
-    let maxVideo = null;
+function candidateSelection(videos: Video[], includedCategories: Set<string>) {
+    let maxVideo =  null;
     let maxCount = 0;
-    let minDuration = 0 
-    for ( const video of videos){
-        const count = video.categories.filter((category: CategoryInterface) => !solution.includes(category)).length
-        if (count > maxCount) {
+    let minDuration = Infinity;
+
+    for (const video of videos) {
+        // Conta le categorie non incluse nella soluzione
+        const count = video.categories.filter(category => !includedCategories.has(category)).length;
+        
+        // Se il conteggio delle categorie è maggiore del massimo trovato
+        if (count > maxCount || (count === maxCount && video.duration < minDuration)) {
             maxCount = count;
             maxVideo = video;
-            minDuration = video.duration
-        }
-        if( count == maxCount && video.duration < minDuration){
-            maxCount = count;
-            maxVideo = video;
-            minDuration = video.duration
+            minDuration = video.duration;
         }
     }
-    return maxVideo
+
+    return maxVideo;
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -124,7 +141,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         if(currentUser.learning_time && currentUser.learning_time > 0) {
             const {favoriteCategories, learning_time} = currentUser
             const categories = favoriteCategories.map(c=>c.category.name)
-            const videos = await GET(learning_time, categories)
+            const videos = await GET(15, categories)
             return res.status(200).json(videos)    
         }
         return res.status(200).json({})
