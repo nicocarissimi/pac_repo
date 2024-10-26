@@ -12,6 +12,7 @@ import { MultiSelect } from '../ui/multiselect';
 import axios from 'axios';
 import useCreateEditVideoDialog from '@/hooks/admin/useCreateEditVideoDialog';
 
+
 const categorySchema = z.object({
   name: z.string().min(2, {message: "Category must be at least 2 characters."})
 })
@@ -48,40 +49,7 @@ const formSchema = z.object({
   message: "Thumbnail Url must contains a valid url. Futhermore allowed protocol is just https"
   }),
   categories: z.array(categorySchema).nonempty({ message: "Please select at least one category"})
-}).superRefine(async(data,ctx) => {
-  const { title, author}  = data
-  const exists = await checkIfAuthorExists(title,author);
-
-  if(exists) {
-    ctx.addIssue({
-      code: z.ZodIssueCode.custom,
-      message: "Combination title and author already exists",
-      path: ["title"],
-    })
-  }
 })
-
-const checkIfAuthorExists = async (title: string, author: string) => {
-  try {
-    const response = await fetch('/api/videos/check', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ title, author }),
-    });
-
-    const data = await response.json();
-    return data.exists;
-  } catch (error) {
-    console.error("API call error", error);
-    return false;
-  }
-};
-
-
-
-
 
 type VideoModalProps = {
   onSubmitCallback?: (value: z.infer<typeof formSchema>) => void
@@ -91,7 +59,6 @@ const VideoModal = ({onSubmitCallback}: VideoModalProps) => {
 
   const { video, isOpen, closeModal } = useCreateEditVideoDialog();
   const { data = [], mutate } = useCategories()
-
   const [allCategories, setAllCategories] = useState([{ label:"", value:"" }])
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -132,14 +99,41 @@ const VideoModal = ({onSubmitCallback}: VideoModalProps) => {
   }
 
 
+  const checkIfAuthorExists = async (title: string, author: string) => {
+    try {
+      const response = await fetch('/api/videos/check', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ title, author }),
+      });
+  
+      const data = await response.json();
+      return data.exists;
+    } catch (error) {
+      console.error("API call error", error);
+      return false;
+    }
+  };
+  
+
+
   async function onSubmit(value: z.infer<typeof formSchema>) {
     try {
+      const exists = await checkIfAuthorExists(value.title, value.author)
+      if (exists && !video) {
+        form.setError("title", {message: "Combination title and author already exists"})
+        return
+      }
+
       if (onSubmitCallback) {
           onSubmitCallback(value); // Await the callback to ensure completion before closing
+          mutate()
       }
       closeModal(); // Only run this if the callback succeeds
     } catch (e) {
-      console.error('eccomiiii', e); // Log the error for debugging
+      console.error(e); // Log the error for debugging
     }
   }
 
