@@ -42,7 +42,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         role: Role.USER
       }
     })
-
+    res.setHeader('Set-Cookie', 'preferences=; Path=/; Max-Age=0 ;HttpOnly')
     return res.status(200).json(user);
   } catch (error) {
     return res.status(400).json({ error: `Something went wrong: ${error}` });
