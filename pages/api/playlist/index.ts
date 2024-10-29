@@ -83,6 +83,9 @@ async function getPlaylist(
     } else {
       // Handle public playlists (hot flag is set)
       queryConditions.isPublic = true;
+      queryConditions.videos = {
+        some : {}
+      }
 
       const playlists = await prismadb.playlist.findMany({
         where: queryConditions,

@@ -6,6 +6,7 @@ import { PlusCircle } from "lucide-react"
 import Router from "next/router";
 import { useCallback } from "react";
 import { useSWRConfig } from "swr";
+import { ScrollArea } from "../ui/scroll-area";
 
 interface EmptyContentProps {
     playlistId: string
@@ -31,18 +32,19 @@ const EmptyContent: React.FC<EmptyContentProps> = ({playlistId}) => {
     },[playlistId]);
 
     return (
-        <Card className="w-full max-w-3xl mx-auto bg-zinc-800 text-background border-0">
+        <Card className="w-full max-w-3xl mx-auto bg-zinc-800 text-background border-0 h-[90%]">
             <CardHeader className="text-center">
                 <CardTitle className="text-2xl font-bold">Your Playlist is Empty</CardTitle>
                 <CardDescription>Start adding some videos to your playlist!</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-4 h-full">
                 <Button className="w-full" size="lg" onClick={()=> {Router.push('/')}}>
                     <PlusCircle className="mr-2 h-5 w-5"/>
                     Add New Content
                 </Button>
-                <div className="mt-8">
+                <div className="mt-8 h-full">
                     <h3 className="text-lg font-semibold mb-4">Suggested videos to add:</h3>
+                    <ScrollArea className="h-[75%] p-4">
                     <div className="grid gap-4 md:grid-cols-2">
                         {suggestedVideos.map((video) => (
                             <Card key={video.id} className="flex items-center p-4 hover:bg-zinc-600 transition-colors cursor-pointer gap-2 bg-zinc-900 border-0">
@@ -57,6 +59,7 @@ const EmptyContent: React.FC<EmptyContentProps> = ({playlistId}) => {
                             </Card>
                         ))}
                     </div>
+                    </ScrollArea>
                 </div>
             </CardContent>
             <CardFooter className="justify-center">
