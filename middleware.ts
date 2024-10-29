@@ -27,7 +27,11 @@ export async function middleware(req: NextRequest) {
       }
       const data = await res.json();
       if(data.categories.length !== 0 || data.role === 'admin'){
-        return NextResponse.next()
+        const res = NextResponse.next()
+        console.log(res.cookies.getAll())
+        res.cookies.set("preferences","ok")
+        console.log(res.cookies.getAll())
+        return res
       }
       else{
         return NextResponse.redirect(new URL('/preferences', req.url));
