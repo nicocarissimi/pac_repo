@@ -97,8 +97,7 @@ const ContentList: React.FC<ContentListProps> = ({ playlistId,videoSearch, myPla
                   <div className="text-gray-400 text-sm">Duration: {video.duration}</div>
                   <div className="text-gray-300 text-sm">{video.description.substring(0, 100)}...</div>
                   <a
-                    onClick={() => router.push(`/watch/${video.id}`)}
-                    href={video.videoUrl}
+                    onClick={() => router.push(`/watch/${video.id}?callbackUrl=${"/playlist"}`)}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-blue-400 underline text-sm"
