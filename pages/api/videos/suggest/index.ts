@@ -143,7 +143,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         if(currentUser.learning_time && currentUser.learning_time > 0) {
             const {favoriteCategories, learning_time} = currentUser
             const categories = favoriteCategories.map(c=>c.category.name)
-            const videos = await GET(15, categories)
+            const videos = await GET(learning_time, categories)
             return res.status(200).json(videos)    
         }
         return res.status(200).json({})
