@@ -64,7 +64,6 @@ const ContentList: React.FC<ContentListProps> = ({ playlistId,videoSearch, myPla
       </Card>
       </>)
     }
-    console.log(playlistId)
     if (playlistId==='0'){
       return(<>
       <Card className="w-full max-w-3xl mx-auto bg-zinc-800 text-background border-0">

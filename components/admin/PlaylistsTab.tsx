@@ -38,11 +38,8 @@ export const PlaylistsTab = () => {
       playlist.propaedeutic = value.propaedeutic
       playlist.isPublic = true
       const newPlaylist = await axios.post('/api/playlist', { playlist }).then(res => res.data)
-      console.log(value.videos.map(video => video.url))
       const videos = await axios.post('/api/videos/get-ids', { videoUrl: value.videos.map(video => video.url)}).then(res=>res.data)
-      console.log(videos)
       const videosId = videos.map((video: VideoInterface) => video.id)
-      console.log(videosId)
       await axios.post(`/api/playlist/${newPlaylist.id}`, {videoIds: videosId} )
       mutate()
     }

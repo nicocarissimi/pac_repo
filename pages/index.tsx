@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 import Billboard from '@/components/Billboard';
 import VideoList from '@/components/VideoList';
@@ -12,6 +12,7 @@ import useCategories from '@/hooks/useCategories';
 import { CategoryInterface, Role, VideoInterface } from '@/libs/definitions';
 import useSuggestedVideo from '@/hooks/useSuggestedVideo';
 import useCurrentUser from '@/hooks/useCurrentUser';
+import useSearchVideo from '@/hooks/useSearchVideo';
 
 const Home = () => {
   const { data: videos = [] } = useVideo();
@@ -21,20 +22,19 @@ const Home = () => {
   const { data: suggestedVideo} = useSuggestedVideo()
   const targetRef = useRef<HTMLDivElement>(null);
   const { data: user } = useCurrentUser()
-
-  const [searchValue, setSearchValue] = useState<string>();
-
-  const handleChangeValue = (value: string) => {
-    if(targetRef.current){
-      (targetRef.current as HTMLDivElement).scrollIntoView({behavior: 'smooth'});
-    }      
-    setSearchValue(value)
-  }
+  const { searchValue } = useSearchVideo()
+  const [filteredVideo, setFilteredVideo] = useState<VideoInterface[]>([])
 
 
+  useEffect(()=> {
+    if(searchValue && searchValue?.length > 0){
+      const filteredVideo = videos.filter((video: VideoInterface)=> video.title.toLowerCase().includes(searchValue))
+      setFilteredVideo(filteredVideo)
+    }
+  },[searchValue])
 
   return (
-    <RootLayout>
+    <RootLayout search={true}>
         <InfoModal visible={isOpen} onClose={closeModal} />
         <PlaylistContentModal />
         <Billboard />
@@ -42,11 +42,16 @@ const Home = () => {
           { user?.role !== Role.ADMIN &&
             <VideoList title="Suggested Video" data={suggestedVideo} />
           }
-          <VideoList title="My List" data={favorites} />
-          { categories.map((category: CategoryInterface) => {
-            const selectedVideo = videos.filter((video: VideoInterface) => video.categories.map((c) => c.name).includes(category.name))
-            return <VideoList key={category.name} title={category.name} data={selectedVideo} />
-          }) }
+          {searchValue ? <VideoList title={"Search Result"} data={filteredVideo} />: 
+          <>
+            <VideoList title="My List" data={favorites} />
+            { categories.map((category: CategoryInterface) => {
+              const selectedVideo = videos.filter((video: VideoInterface) => video.categories.map((c) => c.name).includes(category.name))
+              return <VideoList key={category.name} title={category.name} data={selectedVideo} />
+            }) }
+          </>
+          }
+         
         </div>
     </RootLayout>
   )

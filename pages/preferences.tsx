@@ -48,7 +48,6 @@ export default function DramaPreferences() {
       learning_time: time,
       categories: selectedTechniques
     }
-    console.log(preferences)
     await axios.post('/api/preferences',{
       ...preferences
     })
