@@ -11,21 +11,18 @@ interface ToggleProps {
  const ToggleSwitch: React.FC<ToggleProps> = ({ onChange, option1, option2, boolFlag, setBool}) =>{
   const [isActive, setIsActive] = useState(boolFlag);
 
-  const handleToggle = useCallback(() => {
-    if(boolFlag !== null){
-      setIsActive(s=>!s)
-      setBool(!boolFlag)
-      return
-    }
-    setIsActive(!isActive)
-    
-  },[boolFlag]);
+
+  const handleToggle = (value: boolean) => {
+    if(value !== isActive)
+      setIsActive(value)
+      setBool(value)
+  }
 
   return (
     <div className="flex justify-between items-center w-full">
       <div className="relative w-full bg-zinc-800 rounded-full p-2 flex items-center">
         <div
-          onClick={onChange? onChange: handleToggle}
+          onClick={onChange? onChange: () => handleToggle(true)}
           className={`flex-1 text-center py-2 rounded-full cursor-pointer transition-all duration-300 ${
             isActive ? 'text-black bg-white' : 'text-white'
           }`}
@@ -33,7 +30,7 @@ interface ToggleProps {
           {option1? option1: "Le tue playlist"}
         </div>
         <div
-          onClick={onChange? onChange: handleToggle}
+          onClick={onChange? onChange: () => handleToggle(false)}
           className={`flex-1 text-center py-2 rounded-full cursor-pointer transition-all duration-300 ${
             !isActive ? 'text-black bg-white' : 'text-white'
           }`}
