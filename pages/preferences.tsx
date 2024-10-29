@@ -45,7 +45,7 @@ export default function DramaPreferences() {
     setIsSubmitting(true);
     // Simulate API call
     const preferences = {
-      learning_time: time,
+      learning_time: time*60,
       categories: selectedTechniques
     }
     await axios.post('/api/preferences',{
