@@ -80,3 +80,18 @@ export enum TabsEnum {
   PLAYLISTS= 'playlists',
   USERS= 'users'
 }
+
+export const convertDuration = (duration?: number, stringable=true) => {
+  if(duration){
+    console.log(duration)
+    const prefix = Math.floor(duration / 60)
+    const decimal = duration % 60
+    var result = prefix.toString() + (stringable ? ' min ' : '.')
+      if(decimal > 0){
+        result = result + decimal.toString() + (stringable ? ' s': '')
+      }
+      console.log(result)
+      return result
+    }
+  return
+}

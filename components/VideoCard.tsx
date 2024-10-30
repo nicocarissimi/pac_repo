@@ -3,9 +3,8 @@ import { useRouter } from 'next/router';
 import { ChevronDownIcon } from '@heroicons/react/24/outline';
 import { PlayIcon,PlusIcon } from '@heroicons/react/24/solid';
 
-import FavoriteButton from '@/components/FavoriteButton';
 import useInfoModalStore from '@/hooks/useInfoModalStore';
-import { VideoInterface } from '@/libs/definitions';
+import { convertDuration, VideoInterface } from '@/libs/definitions';
 import usePlaylistModalStore from '@/hooks/usePlaylistModalStore';
 
 interface VideoCardProps {
@@ -90,7 +89,7 @@ const VideoCard: React.FC<VideoCardProps> = ({ data }) => {
             <p className="text-white text-[10px] lg:text-sm">{data.description}</p>
           </div>
           <div className="flex flex-row items-center gap-2 mt-4 text-[8px] text-white lg:text-sm">
-            <div>{data.duration} (min)</div>
+            <div>{convertDuration(data.duration)}</div>
           </div>
         </div>
       </div>

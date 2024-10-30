@@ -3,7 +3,7 @@ import { Button } from "../ui/button"
 import useVideo from "@/hooks/useVideo"
 import { useEffect, useState } from "react"
 import { MoreHorizontal } from "lucide-react"
-import { VideoInterface } from "@/libs/definitions"
+import { convertDuration, VideoInterface } from "@/libs/definitions"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../ui/card"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../ui/dropdown-menu"
 import {
@@ -41,9 +41,14 @@ export const VideosTab = () => {
         }
     }
 
+    const handleConvertDurationInInteger = (value: number) =>{
+      return Math.floor(value)*60 + Math.round(((value - Math.floor(value))*100),2)
+    }
+
     
     const handleCreateNewVideo = async(value: VideoInterface) => {
-        await axios.post('/api/videos', { value }); 
+        const video = {...value, duration: handleConvertDurationInInteger(value.duration!)}
+        await axios.post('/api/videos', {value: video }); 
         mutate(); 
     }
 
@@ -100,11 +105,11 @@ export const VideosTab = () => {
                   <TableCell className="font-medium w-80">
                     {video.description}                          
                   </TableCell>
-                  <TableCell className="font-medium w-80">
+                  <TableCell className="font-medium w-50">
                     {video.author}                          
                   </TableCell>
-                  <TableCell className="hidden md:table-cell">
-                    {video.duration}
+                  <TableCell className="font-medium w-[5%]">
+                    {convertDuration(video.duration)}
                   </TableCell>
                   <TableCell className="hidden md:table-cell">
                     <div className='flex gap-2 flex-wrap'>

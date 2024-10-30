@@ -7,7 +7,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 import useCategories from '@/hooks/useCategories';
-import { CategoryInterface, defaultVideo } from '@/libs/definitions';
+import { CategoryInterface, convertDuration, defaultVideo } from '@/libs/definitions';
 import { MultiSelect } from '../ui/multiselect';
 import axios from 'axios';
 import useCreateEditVideoDialog from '@/hooks/admin/useCreateEditVideoDialog';
@@ -23,7 +23,7 @@ const formSchema = z.object({
   }),
   description: z.string().min(1, {
     message: "Description must be at least 1 character."
-  }),
+  }).max(300,{message: "Description can't be greater than 300 character"}),
   duration: z.string()
     .transform(value => parseFloat(value))
     .refine(value => {
@@ -82,7 +82,8 @@ const VideoModal = ({onSubmitCallback}: VideoModalProps) => {
   
   useEffect(()=> {
     if(video){
-      form.reset(video)
+      const v = {...video, duration: Number(convertDuration(Number(video.duration), false))}
+      form.reset(v)
     } else {
       form.reset(defaultVideo())
     }
@@ -126,7 +127,6 @@ const VideoModal = ({onSubmitCallback}: VideoModalProps) => {
         form.setError("title", {message: "Combination title and author already exists"})
         return
       }
-
       if (onSubmitCallback) {
           onSubmitCallback(value); // Await the callback to ensure completion before closing
           mutate()

@@ -39,11 +39,11 @@ const Home = () => {
         <PlaylistContentModal />
         <Billboard />
         <div ref={targetRef} className="pb-40">
-          { user?.role !== Role.ADMIN &&
-            <VideoList title="Suggested Video" data={suggestedVideo} />
-          }
           {searchValue ? <VideoList title={"Search Result"} data={filteredVideo} />: 
           <>
+            { user?.role !== Role.ADMIN &&
+              <VideoList title="Suggested Video" data={suggestedVideo} />
+            }
             <VideoList title="My List" data={favorites} />
             { categories.map((category: CategoryInterface) => {
               const selectedVideo = videos.filter((video: VideoInterface) => video.categories.map((c) => c.name).includes(category.name))

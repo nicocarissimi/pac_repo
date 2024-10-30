@@ -62,8 +62,6 @@ async function addPreferences(
 ) {
     try{
     const {learning_time, categories} = (req.body)
-    console.log(categories)
-    console.log(req.body)
     const user = await prismadb.user.update({
         where:{
             id: currentUserId

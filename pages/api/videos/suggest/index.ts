@@ -119,7 +119,7 @@ function candidateSelection(videos: Video[], includedCategories: Set<string>, to
     let minDuration = Infinity;
 
     for (let k = 0; k<videos.length; k++) {
-        if(videos[k].duration + total < learning_time) {
+        if((videos[k].duration + total) < learning_time) {
             // Conta le categorie non incluse nella soluzione
             const count = videos[k].categories.filter(category => !includedCategories.has(category)).length;
             
