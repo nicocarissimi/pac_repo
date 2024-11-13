@@ -12,6 +12,7 @@ import { useRouter } from 'next/router';
 import useVideo from '@/hooks/useVideo';
 import EmptyContent from './playlist/EmptyContent';
 import { Card, CardHeader, CardTitle, CardDescription } from './ui/card';
+import {convertDuration} from "@/libs/definitions"
 
 interface ContentListProps {
   myPlaylists: boolean
@@ -94,7 +95,7 @@ const ContentList: React.FC<ContentListProps> = ({ playlistId,videoSearch, myPla
                 {/* Video Info */}
                 <div className="w-[70%] h-full flex flex-col justify-between">
                   <div className="text-lg font-bold text-white">{video.title}</div>
-                  <div className="text-gray-400 text-sm">Duration: {video.duration}</div>
+                  <div className="text-gray-400 text-sm">Duration: {convertDuration(video.duration)}</div>
                   <div className="text-gray-300 text-sm">{video.description.substring(0, 100)}...</div>
                   <a
                     onClick={() => router.push(`/watch/${video.id}?callbackUrl=${"/playlist"}`)}
