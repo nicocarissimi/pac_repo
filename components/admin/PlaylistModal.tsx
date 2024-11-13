@@ -20,12 +20,11 @@ const videoSchema = z.object({
 
 const formSchema = z.object({
     title: z.string().min(1,{message: "Please insert title"}),   
-    propaedeutic: z.boolean().default(false),
     videos: z.array(videoSchema).nonempty({message: "Playlist can't be empty"})
   })
 
 type PlaylistModalProps = {
-    onSubmitCallback?: (value: z.infer<typeof formSchema>) => void
+    onSubmitCallback?: (value: z.infer<typeof formSchema>, method?: string) => void
 }
 
 export default function PlaylistModal({onSubmitCallback}: PlaylistModalProps)  {
@@ -71,7 +70,13 @@ export default function PlaylistModal({onSubmitCallback}: PlaylistModalProps)  {
     async function onSubmit(value: z.infer<typeof formSchema>) {
         try{
             if(onSubmitCallback){
-                onSubmitCallback(value)
+                if(playlist?.id){
+                    onSubmitCallback(value, playlist?.id)     
+                }
+                else{
+                    onSubmitCallback(value)
+                }
+                
             } 
             handleClose()
         }catch(e) {
@@ -130,26 +135,6 @@ export default function PlaylistModal({onSubmitCallback}: PlaylistModalProps)  {
                 </FormItem>
                 )}
             />
-             <FormField
-                    control={form.control}
-                    name="propaedeutic"
-                    render={({ field: { value, onChange }}) => (
-                        <FormItem>
-                            <FormControl>
-                            <div className="flex items-center space-x-2">
-                                <Checkbox id="terms" checked={value} onCheckedChange={onChange}/>
-                                <label
-                                    htmlFor="terms"
-                                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                                >
-                                    Propaedeutics Playlist
-                                </label>
-                                </div>    
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
             <div className='w-full flex justify-end gap-2'>
                 <Button variant={'outline'} onClick={handleClose}> Close </Button>
                 <Button type="submit" className='items-end'>Submit</Button>

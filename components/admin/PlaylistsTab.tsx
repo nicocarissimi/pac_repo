@@ -32,15 +32,22 @@ export const PlaylistsTab = () => {
     ))
     }
        
-    const handleCreateNewPlaylist = async(value: {title:string, videos:[{url: string}], propaedeutic: boolean}) => {
+    const handleCreateNewPlaylist = async(value: {title:string, videos:[{url: string}]}, playlistId?:string) => {
+      console.log(playlistId)
       const playlist = {} as PlaylistWithVideoInterface
       playlist.name = value.title;
-      playlist.propaedeutic = value.propaedeutic
       playlist.isPublic = true
-      const newPlaylist = await axios.post('/api/playlist', { playlist }).then(res => res.data)
+      let Playlist;
+      if(!playlistId){
+        Playlist = await axios.post('/api/playlist', { playlist }).then(res => res.data)
+        }
+      else{
+        playlist.id = playlistId
+        Playlist = await axios.put('/api/playlist', { playlist }).then(res => res.data)
+      }
       const videos = await axios.post('/api/videos/get-ids', { videoUrl: value.videos.map(video => video.url)}).then(res=>res.data)
       const videosId = videos.map((video: VideoInterface) => video.id)
-      await axios.post(`/api/playlist/${newPlaylist.id}`, {videoIds: videosId} )
+      await axios.post(`/api/playlist/${Playlist.id}`, {videoIds: videosId, videoRefresh: true} )
       mutate()
     }
 
@@ -51,7 +58,7 @@ export const PlaylistsTab = () => {
 
     return (
       <>
-      <PlaylistModal onSubmitCallback={(value) => handleCreateNewPlaylist(value)} />
+      <PlaylistModal onSubmitCallback={(value, playlistId) => handleCreateNewPlaylist(value, playlistId)}/>
         <Card x-chunk="dashboard-06-chunk-0">
         <CardHeader>
           <CardTitle>Playlists</CardTitle>
@@ -69,7 +76,6 @@ export const PlaylistsTab = () => {
                 </TableHead>
                 <TableHead>Name</TableHead>
                 <TableHead>Videos</TableHead>
-                <TableHead>Propaedeutic</TableHead>
                 <TableHead>
                   <span className="sr-only">Actions</span>
                 </TableHead>
@@ -97,9 +103,6 @@ export const PlaylistsTab = () => {
                         <Badge key={title}>{title}</Badge>
                       ))}
                   </div>
-                </TableCell>
-                <TableCell>
-                  {playlist.propaedeutic.toString()}
                 </TableCell>
                 <TableCell>
                   <DropdownMenu>

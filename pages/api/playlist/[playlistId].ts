@@ -81,8 +81,14 @@ async function handleGet(req: NextApiRequest, res: NextApiResponse) {
 // Handle POST request -> add one or more videos to a specific playlist
 async function handlePost(req: NextApiRequest, res: NextApiResponse) {
   const { playlistId } = req.query;
-  const { videoIds } = req.body;
-
+  const { videoIds, videoRefresh} = req.body;
+  if(videoRefresh){
+    await prismadb.videosInPlaylists.deleteMany({
+      where: {
+        playlistId: playlistId as string
+      },
+    });
+  }
   try {
     const existingEntry = await prismadb.videosInPlaylists.findFirst({
       where: {
