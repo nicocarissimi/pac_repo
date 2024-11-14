@@ -129,7 +129,6 @@ async function createPlaylist(
         name: playlist.name,
         userId: currentUserId,
         isPublic: playlist.isPublic,
-        propaedeutic: playlist.propaedeutic
       },
     });
 

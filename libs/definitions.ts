@@ -32,7 +32,6 @@ export interface PlaylistInterface {
   userId?: string;
   name: string;
   isPublic: boolean;
-  propaedeutic: boolean;
   thumbnailUrl: string;
   videos_title?: string[]
 }
