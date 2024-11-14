@@ -43,7 +43,7 @@ export default function UsersTab() {
         <>
         <Card x-chunk="dashboard-06-chunk-0">
           <CardHeader>
-            <CardTitle>Users</CardTitle>
+            <CardTitle data-testid="users-title">Users</CardTitle>
             <CardDescription>
               Manage all contents within action sphere
             </CardDescription>

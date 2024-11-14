@@ -63,7 +63,7 @@ export const VideosTab = () => {
         <VideoModal onSubmitCallback={(value) => handleCreateNewVideo(value)} />
             <Card x-chunk="dashboard-06-chunk-0">
           <CardHeader>
-            <CardTitle>Videos</CardTitle>
+            <CardTitle data-testid="videos-title">Videos</CardTitle>
             <CardDescription>
               Manage all videos within action sphere
             </CardDescription>

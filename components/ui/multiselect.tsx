@@ -206,6 +206,7 @@ export const MultiSelect = React.forwardRef<
         onItemCreate(inputValue)
       }
       setSelectedValues((v)=>[...v, inputValue])
+      onValueChange([...selectedValues, inputValue])
       setInputValue('')
     }
 
@@ -228,7 +229,7 @@ export const MultiSelect = React.forwardRef<
           >
             {selectedValues.length > 0 ? (
               <div className="flex justify-between items-center w-full">
-                <div className="flex flex-wrap items-center">
+                <div className="flex flex-wrap items-center" data-testid="categories-container">
                   {selectedValues.slice(0, maxCount).map((value) => {
                     const option = options.find((o) => o.value === value);
                     const IconComponent = option?.icon;
@@ -291,7 +292,7 @@ export const MultiSelect = React.forwardRef<
                 </div>
               </div>
             ) : (
-              <div className="flex items-center justify-between w-full mx-auto">
+              <div className="flex items-center justify-between w-full mx-auto" data-testid="categories-select">
                 <span className="text-sm text-muted-foreground mx-3">
                   {placeholder}
                 </span>
@@ -318,7 +319,7 @@ export const MultiSelect = React.forwardRef<
                   <div className="flex flex-col gap-4">
                     No results found.
                     { inputValue.replaceAll(' ', '') !== '' && onItemCreate && 
-                     <Button onClick={handleItemCreate}> Add {inputValue} </Button>
+                     <Button onClick={handleItemCreate} data-testid="add-category-btn"> Add {inputValue} </Button>
                     }
                   </div>
                 </CommandEmpty>

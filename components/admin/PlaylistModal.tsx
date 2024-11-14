@@ -10,7 +10,6 @@ import { MultiSelect } from "../ui/multiselect";
 import useVideo from "@/hooks/useVideo";
 import { useEffect, useState } from "react";
 import { VideoInterface } from "@/libs/definitions";
-import { Checkbox } from "../ui/checkbox";
 
 
 const videoSchema = z.object({
@@ -87,7 +86,7 @@ export default function PlaylistModal({onSubmitCallback}: PlaylistModalProps)  {
 
     return (
         <Dialog open={isOpen} onOpenChange={handleClose} modal={false}>
-        <DialogContent className="sm:max-w-[600px]" onInteractOutside={(e)=>{e.preventDefault()}}>
+        <DialogContent className="sm:max-w-[600px]" onInteractOutside={(e)=>{e.preventDefault()}} data-testid="playlists-modal">
             <DialogHeader>
             <DialogTitle>Create new Playlist</DialogTitle>
             <DialogDescription>
@@ -136,7 +135,7 @@ export default function PlaylistModal({onSubmitCallback}: PlaylistModalProps)  {
                 )}
             />
             <div className='w-full flex justify-end gap-2'>
-                <Button variant={'outline'} onClick={handleClose}> Close </Button>
+                <Button variant={'outline'} onClick={handleClose} data-testid="playlist-modal-close-btn"> Close </Button>
                 <Button type="submit" className='items-end'>Submit</Button>
             </div>
             </form>

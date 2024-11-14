@@ -137,9 +137,10 @@ const VideoModal = ({onSubmitCallback}: VideoModalProps) => {
     }
   }
 
+
   return (
     <Dialog open={isOpen} onOpenChange={handleClose} modal={false}>
-    <DialogContent className="sm:max-w-[600px]" onInteractOutside={(e)=>{e.preventDefault()}}>
+    <DialogContent className="sm:max-w-[600px]" onInteractOutside={(e)=>{e.preventDefault()}}  data-testid="videos-modal">
       <DialogHeader>
         <DialogTitle>{video ? 'Edit': 'Create new'} content</DialogTitle>
         <DialogDescription>
@@ -155,7 +156,7 @@ const VideoModal = ({onSubmitCallback}: VideoModalProps) => {
             <FormItem>
               <FormLabel>Title</FormLabel>
               <FormControl>
-                <Input placeholder="Insert title..." {...field}/>
+                <Input id='title_input' placeholder="Insert title..." {...field}/>
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -168,7 +169,7 @@ const VideoModal = ({onSubmitCallback}: VideoModalProps) => {
             <FormItem>
               <FormLabel>Description</FormLabel>
               <FormControl>
-                <Input placeholder="Insert description..." {...field} />
+                <Input id='description_input' placeholder="Insert description..." {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -181,7 +182,7 @@ const VideoModal = ({onSubmitCallback}: VideoModalProps) => {
             <FormItem>
               <FormLabel>Author</FormLabel>
               <FormControl>
-                <Input placeholder="Insert author..." {...field} />
+                <Input id='author_input' placeholder="Insert author..." {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -194,7 +195,7 @@ const VideoModal = ({onSubmitCallback}: VideoModalProps) => {
             <FormItem>
               <FormLabel>Duration (min)</FormLabel>
               <FormControl>
-                <Input placeholder="Insert duratioon in minutes..." {...field} />
+                <Input id='duration_input' placeholder="Insert duratioon in minutes..." {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -207,7 +208,7 @@ const VideoModal = ({onSubmitCallback}: VideoModalProps) => {
             <FormItem>
               <FormLabel>Video Url</FormLabel>
               <FormControl>
-                <Input placeholder="Insert video url..." {...field} />
+                <Input id='videoUrl_input' placeholder="Insert video url..." {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -220,7 +221,7 @@ const VideoModal = ({onSubmitCallback}: VideoModalProps) => {
             <FormItem>
               <FormLabel>Icon Url</FormLabel>
               <FormControl>
-                <Input placeholder="Insert icon url..." {...field} />
+                <Input id='thumbnailUrl_input' placeholder="Insert icon url..." {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -253,8 +254,8 @@ const VideoModal = ({onSubmitCallback}: VideoModalProps) => {
           )}
         />
         <div className='w-full flex justify-end gap-2'>
-          <Button variant={'outline'} onClick={handleClose}> Close </Button>
-          <Button type="submit" className='items-end'>Submit</Button>
+          <Button variant={'outline'} onClick={handleClose} data-testid="video-modal-close-btn"> Close </Button>
+          <Button type="submit" className='items-end' data-testid="submit-video-btn" >Submit</Button>
         </div>
       </form>
     </Form>

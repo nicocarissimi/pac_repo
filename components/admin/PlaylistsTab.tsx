@@ -60,7 +60,7 @@ export const PlaylistsTab = () => {
       <PlaylistModal onSubmitCallback={(value, playlistId) => handleCreateNewPlaylist(value, playlistId)}/>
         <Card x-chunk="dashboard-06-chunk-0">
         <CardHeader>
-          <CardTitle>Playlists</CardTitle>
+          <CardTitle data-testid="playlists-title">Playlists</CardTitle>
           <CardDescription>
             Manage all playlists within action sphere
           </CardDescription>

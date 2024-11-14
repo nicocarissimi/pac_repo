@@ -40,9 +40,9 @@ import { VideosTab } from '@/components/admin/VideosTab';
             <Tabs value={tabValue}>
               <div className="flex items-center">
               <TabsList>
-                <TabsTrigger value="videos" onClick={()=>setTabValue(TabsEnum.VIDEOS)}>Videos</TabsTrigger>
-                <TabsTrigger value="playlists" onClick={()=>setTabValue(TabsEnum.PLAYLISTS)}>Playlists</TabsTrigger>
-                <TabsTrigger value="users" onClick={()=>setTabValue(TabsEnum.USERS)}>Users</TabsTrigger>
+                <TabsTrigger value="videos" onClick={()=>setTabValue(TabsEnum.VIDEOS)} data-testid="videos-btn">Videos</TabsTrigger>
+                <TabsTrigger value="playlists" onClick={()=>setTabValue(TabsEnum.PLAYLISTS)} data-testid="playlists-btn">Playlists</TabsTrigger>
+                <TabsTrigger value="users" onClick={()=>setTabValue(TabsEnum.USERS)} data-testid="users-btn">Users</TabsTrigger>
               </TabsList>
               { tabValue !== TabsEnum.USERS &&
                 <div className="ml-auto">
