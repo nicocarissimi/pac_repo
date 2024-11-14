@@ -27,16 +27,21 @@ export function defaultVideo(): VideoInterface {
   };
 }
 
+export interface PlaylistVideoInterface {
+  title: string;
+  videoUrl: string;
+}
+
 export interface PlaylistInterface {
   id?: string;
   userId?: string;
   name: string;
   isPublic: boolean;
   thumbnailUrl: string;
-  videos_title?: string[]
+  videos: PlaylistVideoInterface[];
 }
 
-export interface PlaylistWithVideoInterface extends Omit<PlaylistInterface,'videos_title'>{
+export interface PlaylistWithVideoInterface extends PlaylistInterface {
   videos: VideoInterface[]
 }
 
@@ -82,14 +87,12 @@ export enum TabsEnum {
 
 export const convertDuration = (duration?: number, stringable=true) => {
   if(duration){
-    console.log(duration)
     const prefix = Math.floor(duration / 60)
     const decimal = duration % 60
     var result = prefix.toString() + (stringable ? ' min ' : '.')
       if(decimal > 0){
         result = result + decimal.toString() + (stringable ? ' s': '')
       }
-      console.log(result)
       return result
     }
   return

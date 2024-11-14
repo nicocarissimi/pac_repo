@@ -33,7 +33,6 @@ export const PlaylistsTab = () => {
     }
        
     const handleCreateNewPlaylist = async(value: {title:string, videos:[{url: string}]}, playlistId?:string) => {
-      console.log(playlistId)
       const playlist = {} as PlaylistWithVideoInterface
       playlist.name = value.title;
       playlist.isPublic = true
@@ -99,8 +98,8 @@ export const PlaylistsTab = () => {
                 </TableCell>
                 <TableCell className="hidden md:table-cell">
                   <div className='flex gap-2 flex-wrap'>
-                    {playlist.videos_title?.map(title=> (
-                        <Badge key={title}>{title}</Badge>
+                    {playlist.videos?.map(video=> (
+                        <Badge key={video.title}>{video.title}</Badge>
                       ))}
                   </div>
                 </TableCell>

@@ -36,7 +36,7 @@ const Auth = () => {
       return true;
     } catch (e) {
       if (e instanceof z.ZodError) {
-        console.log(e)
+        console.error(e)
         const fieldErrors: { name?: string; email?: string; password?: string } = {};
         
         e.errors.forEach(err => {

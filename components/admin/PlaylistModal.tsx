@@ -121,7 +121,7 @@ export default function PlaylistModal({onSubmitCallback}: PlaylistModalProps)  {
                     <MultiSelect
                         options={allVideos}
                         placeholder="Select videos"
-                        defaultValue={playlist ? playlist.videos_title : undefined}
+                        defaultValue={playlist ? playlist.videos.map(video => video.videoUrl) : undefined}
                         onValueChange={(selectedValues) => {
                         const videos = selectedValues.map(value => ({"url": value}));
                         field.onChange(videos);

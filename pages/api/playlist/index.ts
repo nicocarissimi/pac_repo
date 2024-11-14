@@ -59,7 +59,8 @@ async function getPlaylist(
               video: {
                 select: {
                   thumbnailUrl: true,
-                  title: infoVideo 
+                  title: infoVideo,
+                  videoUrl: infoVideo
                 },
               },
             },
@@ -72,7 +73,7 @@ async function getPlaylist(
         const p: any = ({...rest,
         thumbnailUrl: videos[0]?.video.thumbnailUrl})
         if(infoVideo){
-          p.videos_title = videos.map(video => video.video.title)
+          p.videos = videos.map(video => ({title: video.video.title, videoUrl: video.video.videoUrl}))
         }
         return p
       });
@@ -147,7 +148,6 @@ async function updatePlaylist(
   try {
     
     const { playlist } = req.body;
-
     const updatedPlaylist = await prismadb.playlist.update({
       where: { id: playlist.id },
       data: {
