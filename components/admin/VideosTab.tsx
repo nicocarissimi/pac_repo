@@ -69,7 +69,7 @@ export const VideosTab = () => {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Input placeholder='Search content...' className='mb-2 ' onChange={handleInputSearch} />
+            <Input placeholder='Search content...' className='mb-2 ' onChange={handleInputSearch} id="search-content"/>
             <Table>
               <TableHeader>
                 <TableRow>
@@ -108,7 +108,7 @@ export const VideosTab = () => {
                   <TableCell className="font-medium w-50">
                     {video.author}                          
                   </TableCell>
-                  <TableCell className="font-medium w-[5%]">
+                  <TableCell className="font-medium w-[8%]">
                     {convertDuration(video.duration)}
                   </TableCell>
                   <TableCell className="hidden md:table-cell">
@@ -125,14 +125,15 @@ export const VideosTab = () => {
                           aria-haspopup="true"
                           size="icon"
                           variant="ghost"
+                          data-testid='toggle-btn'
                         >
                           <MoreHorizontal className="h-4 w-4" />
                           <span className="sr-only">Toggle menu</span>
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={()=> openModal(video)}>Edit</DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => handleDeleteVideo(video.id!)}>Delete</DropdownMenuItem>
+                        <DropdownMenuItem onClick={()=> openModal(video)}  data-testid='toggle-btn-edit'>Edit</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleDeleteVideo(video.id!)} data-testid='toggle-btn-delete'>Delete</DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>
