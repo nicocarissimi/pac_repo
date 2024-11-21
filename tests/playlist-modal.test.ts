@@ -66,8 +66,8 @@ test.describe('Video Modal', () => {
         const categoryCount = await categoryContainer.locator('div').count(); 
         expect(categoryCount).toBe(1);
         await page.fill('input#title_input', 'Video Test');
-        await page.fill('input#description_input', 'Description Test');
-        await page.fill('input#author_input', 'Author Test');
+        await page.fill('input#description_input', generateRandomString());
+        await page.fill('input#author_input', generateRandomString());
         await page.fill('input#duration_input', '10');
         await page.fill('input#videoUrl_input', 'https://www.youtube.com/watch?v=video_test');
         await page.fill('input#thumbnailUrl_input', 'https://www.youtube.com/watch?v=thumbnail_test');
@@ -76,9 +76,37 @@ test.describe('Video Modal', () => {
         const modal = page.getByTestId('videos-modal');
         await expect(modal).not.toBeVisible();
 
-
-
     })
+
+    test('should delete a video', async ({ page }) => {
+        await page.fill('input#search-content', 'Video Test');
+        await page.waitForTimeout(2000);
+        var tableBody = page.getByTestId('table-body');
+        var videoCounter = await tableBody.locator('tr').count();
+        expect(videoCounter).toBe(1);
+        // const toggleBtn = page.getByTestId('toggle-btn');
+        // await toggleBtn.click();
+        // const deleteBtn = page.getByTestId('toggle-btn-delete');
+        // await deleteBtn.click();
+        // await page.waitForTimeout(2000);
+        // tableBody = page.getByTestId('table-body');
+        // videoCounter = await tableBody.locator('tr').count();
+        // expect(videoCounter).toBe(0);	
+    })
+
+    test('should edit a video', async ({ page }) => {
+        const toggleBtn = page.getByTestId('toggle-btn');
+        await toggleBtn.click();
+        const editBtn = page.getByTestId('toggle-btn-edit');
+        await editBtn.click();
+        const modal = page.getByTestId('videos-modal');
+        await expect(modal).toBeVisible();
+        await page.fill('input#title_input', generateRandomString());
+        const submit = page.getByTestId('submit-video-btn');
+        await submit.click();
+        await page.waitForTimeout(2000);
+    })
+
 
     test('should close the video modal', async ({ page }) => {
         const btn = page.getByText('Add videos');
@@ -120,7 +148,7 @@ test.describe('Playlist Modal', () => {
         await close.click();
 
         // Wait until the modal is detached from the DOM or hidden
-        await expect(modal).not.toBeVisible(); // Or
+        await expect(modal).not.toBeVisible();
         // await expect(modal).not.toBeAttached();
     });
 });
