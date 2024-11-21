@@ -82,7 +82,7 @@ const VideoModal = ({onSubmitCallback}: VideoModalProps) => {
   
   useEffect(()=> {
     if(video){
-      const v = {...video, duration: Number(convertDuration(Number(video.duration), false))}
+      const v = {...video, duration: convertDuration(Number(video.duration), false)}
       form.reset(v)
     } else {
       form.reset(defaultVideo())

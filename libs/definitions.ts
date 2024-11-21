@@ -90,10 +90,11 @@ export const convertDuration = (duration?: number, stringable=true) => {
     const prefix = Math.floor(duration / 60)
     const decimal = duration % 60
     var result = prefix.toString() + (stringable ? ' min ' : '.')
-      if(decimal > 0){
-        result = result + decimal.toString() + (stringable ? ' s': '')
-      }
-      return result
+    result = result + decimal.toString()
+    if(stringable){
+      result = result + ' s'
+    }
+    return result
     }
   return
 }
