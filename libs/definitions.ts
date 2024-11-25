@@ -96,5 +96,5 @@ export const convertDuration = (duration?: number, stringable=true) => {
     }
     return result
     }
-  return
+  return ''
 }

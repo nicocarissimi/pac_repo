@@ -6,11 +6,12 @@ import { Role } from '@/libs/definitions';
 const user_new_name = "NickTest"
 const user_new_email = "nick-testing-playwright@test.it"
 const user_new_pass = "123456"
+let videoId = "";
 
 const playlistName="playwright test Playlist"
 const privatePlaylistName= playlistName+"-Private"
 let categoryId = ''
-async function createUser(){
+async function setupData(){
     const categoryName = 'New Category';
     const hashedPassword = await bcrypt.hash(user_new_pass, 12);
     const newCategory = await prismadb.category.create({
@@ -36,6 +37,28 @@ async function createUser(){
             categoryId
         }
     })
+    const newVideo = await prismadb.video.create({
+        data: {
+            title: 'My Video Title',
+            description: 'This is a description of my video.',
+            videoUrl: 'https://www.youtube.com/watch?v=7pBHAHGqok0',
+            thumbnailUrl: 'https://upload.wikimedia.org/wikipedia/commons/7/70/Big.Buck.Bunny.-.Opening.Screen.png',
+            author: 'Author Name',
+            duration: 10, // Duration in seconds
+          categories: {
+            create: {
+              category: {
+                connect: {
+                  id: newCategory.id, // Connect to the newly created category
+                },
+              },
+            },
+          },
+        },
+      });
+  
+      console.log('Video created successfully:', newVideo);
+      videoId = newVideo.id;
 }
 async function cleanData(){
     try{
@@ -61,13 +84,18 @@ async function cleanData(){
                 id: categoryId
             }
         })
+        await prismadb.video.delete({
+            where:{
+                id: videoId
+            }
+        })
     }catch(error) {
         console.error('Failed to remove setupData:', error , "Email received:", user_new_email, " CategoryID:", categoryId);
       }
 }
 
 test.beforeAll(async()=>{
-    await createUser();
+    await setupData();
 })
 
 test.afterAll(async()=>{

@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { VideoInterface } from '@/libs/definitions';
+import { VideoInterface, convertDuration} from '@/libs/definitions';
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Separator } from '@/components/ui/separator'
 import usePlaylistContent from '@/hooks/usePlaylistContent';
@@ -12,7 +12,6 @@ import { useRouter } from 'next/router';
 import useVideo from '@/hooks/useVideo';
 import EmptyContent from './playlist/EmptyContent';
 import { Card, CardHeader, CardTitle, CardDescription } from './ui/card';
-import {convertDuration} from "@/libs/definitions"
 
 interface ContentListProps {
   myPlaylists: boolean

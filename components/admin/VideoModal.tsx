@@ -27,8 +27,8 @@ const formSchema = z.object({
   duration: z.string()
     .transform(value => parseFloat(value))
     .refine(value => {
-      if (isNaN(value)) return false
-      if (value <= 0) return false
+      if (isNaN(value)) { return false }
+      if (value <= 0) { return false }
       const hours = Math.floor(value)
       const minutes = (value-hours) * 100;
       return minutes <= 59;
@@ -82,7 +82,7 @@ const VideoModal = ({onSubmitCallback}: VideoModalProps) => {
   
   useEffect(()=> {
     if(video){
-      const v = {...video, duration: convertDuration(Number(video.duration), false)}
+      const v = {...video, duration: Number(convertDuration(Number(video.duration), false))}
       form.reset(v)
     } else {
       form.reset(defaultVideo())

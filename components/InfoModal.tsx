@@ -2,9 +2,10 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 
 import PlayButton from '@/components/PlayButton';
-import FavoriteButton from '@/components/FavoriteButton';
 import useInfoModalStore from '@/hooks/useInfoModalStore';
 import useVideo from '@/hooks/useVideo';
+import usePlaylistModalStore from '@/hooks/usePlaylistModalStore';
+import { PlusIcon } from 'lucide-react';
 
 interface InfoModalProps {
   visible?: boolean;
@@ -13,6 +14,7 @@ interface InfoModalProps {
 
 const InfoModal: React.FC<InfoModalProps> = ({ visible, onClose }) => {
   const [isVisible, setIsVisible] = useState<boolean>(!!visible);
+  const { openPlaylistModal } = usePlaylistModalStore();
 
   const { videoId } = useInfoModalStore();
   const { data = {} } = useVideo(videoId);
@@ -48,7 +50,9 @@ const InfoModal: React.FC<InfoModalProps> = ({ visible, onClose }) => {
               </p>
               <div className="flex flex-row gap-4 items-center">
                 <PlayButton videoId={data?.id} />
-                <FavoriteButton videoId={data?.id} />
+                <div onClick={() => openPlaylistModal(data?.id!)} className="cursor-pointer group/item w-6 h-6 lg:w-10 lg:h-10 border-white border-2 rounded-full flex justify-center items-center transition hover:border-neutral-300">
+                  <PlusIcon className="text-white group-hover/item:text-neutra l-300 w-4 lg:w-6"/>
+                </div>
               </div>
             </div>
           </div>

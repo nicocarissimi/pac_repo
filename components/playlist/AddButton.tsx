@@ -1,19 +1,12 @@
 import axios from 'axios';
 import React, { useCallback, useState } from 'react';
 import { PlusIcon } from '@heroicons/react/24/outline';
-
-import useCurrentUser from '@/hooks/useCurrentUser';
-import useFavorites from '@/hooks/useFavorites';
-import PlaylistModal from './PlaylistModal';
-import PlaylistDisplay from './SidebarList';
 import AddVideoPlaylist from './AddVideoPlaylist';
-
 interface FavoriteButtonProps {
   movieId: string
 }
 
 const FavoriteButton: React.FC<FavoriteButtonProps> = ({ movieId }) => {
-  const { mutate: mutateFavorites } = useFavorites();
 
   const [showModal, setShowModal] = useState(false);
 

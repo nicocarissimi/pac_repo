@@ -13,9 +13,10 @@ interface ToggleProps {
 
 
   const handleToggle = (value: boolean) => {
-    if(value !== isActive)
+    if(value !== isActive){
       setIsActive(value)
       setBool(value)
+    }
   }
 
   return (

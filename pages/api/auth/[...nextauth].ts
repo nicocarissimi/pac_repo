@@ -50,7 +50,7 @@ export const authOptions: NextAuthOptions = {
             throw new Error('Incorrect password');
           }
   
-          return user;
+          return user as User;
         } catch (error) {
           console.log(error)  
         }
@@ -87,13 +87,15 @@ export const authOptions: NextAuthOptions = {
       }
       return session;
     },
-    async signIn({user, account}: {user: User, account: Account}) {
-      if (account.provider === 'google' || account.provider === 'github') {
+    signIn: async ({ user, account }) => {
+      if (account) {
+        if (account.provider === 'google' || account.provider === 'github') {
           user.role = 'user'; // Set a default role or customize it
           user.image = '/images/user/default-green.png';
+        }
       }
       return true;
-  },
+    },
   },
   pages: {
     signIn: '/auth'

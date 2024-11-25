@@ -173,7 +173,7 @@ const SidebarList: React.FC<PlaylistDisplayProps> = ({ myPlaylists, playlistId, 
       </ScrollArea>
       {showModal && (
         <PlaylistModal
-          playlist={{ id: selectedPlaylist.id, name: playlistName, isPublic: isPublic, thumbnailUrl: ''}}
+          playlist={{ id: selectedPlaylist.id, name: playlistName, isPublic: isPublic, thumbnailUrl: ''} as PlaylistInterface} 
           onClose={handleCloseModal}
         />
       )}

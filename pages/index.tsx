@@ -3,7 +3,6 @@ import React, { useEffect, useRef, useState } from 'react';
 import Billboard from '@/components/Billboard';
 import VideoList from '@/components/VideoList';
 import InfoModal from '@/components/InfoModal';
-import useFavorites from '@/hooks/useFavorites';
 import useInfoModalStore from '@/hooks/useInfoModalStore';
 import RootLayout from '../components/layout';
 import useVideo from '@/hooks/useVideo';
@@ -16,7 +15,6 @@ import useSearchVideo from '@/hooks/useSearchVideo';
 
 const Home = () => {
   const { data: videos = [] } = useVideo();
-  const { data: favorites = [] } = useFavorites();
   const {isOpen, closeModal} = useInfoModalStore();
   const { data: categories=[]} = useCategories();
   const { data: suggestedVideo} = useSuggestedVideo()
@@ -44,7 +42,6 @@ const Home = () => {
             { user?.role !== Role.ADMIN &&
               <VideoList title="Suggested Video" data={suggestedVideo} />
             }
-            <VideoList title="My List" data={favorites} />
             { categories.map((category: CategoryInterface) => {
               const selectedVideo = videos.filter((video: VideoInterface) => video.categories.map((c) => c.name).includes(category.name))
               return <VideoList key={category.name} title={category.name} data={selectedVideo} />

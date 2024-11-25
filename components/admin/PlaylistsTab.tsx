@@ -8,10 +8,12 @@ import { MoreHorizontal } from "lucide-react"
 import { useEffect, useState } from "react"
 import usePlaylist from "@/hooks/usePlaylist"
 import { PlaylistInterface, PlaylistWithVideoInterface, VideoInterface } from "@/libs/definitions"
-import PlaylistModal from "./PlaylistModal"
+import PlaylistModal, {formSchema} from "./PlaylistModal"
 import axios from "axios"
 import useCreateEditPlaylistDialog from "@/hooks/admin/useCreateEditPlaylistDialog"
 import { Badge } from "../ui/badge"
+
+import { z } from "zod";
 
 export const PlaylistsTab = () => {
   const { openModal } = useCreateEditPlaylistDialog()
@@ -32,7 +34,7 @@ export const PlaylistsTab = () => {
     ))
     }
        
-    const handleCreateNewPlaylist = async(value: {title:string, videos:[{url: string}]}, playlistId?:string) => {
+    const handleCreateNewPlaylist = async(value: z.infer<typeof formSchema>, playlistId?:string) => {
       const playlist = {} as PlaylistWithVideoInterface
       playlist.name = value.title;
       playlist.isPublic = true
@@ -57,7 +59,7 @@ export const PlaylistsTab = () => {
 
     return (
       <>
-      <PlaylistModal onSubmitCallback={(value, playlistId) => handleCreateNewPlaylist(value, playlistId)}/>
+      <PlaylistModal onSubmitCallback={(value, playlistId) => handleCreateNewPlaylist(value as z.infer<typeof formSchema>, playlistId)}/>
         <Card x-chunk="dashboard-06-chunk-0">
         <CardHeader>
           <CardTitle data-testid="playlists-title">Playlists</CardTitle>

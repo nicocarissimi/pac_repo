@@ -5,7 +5,7 @@ const user_login_email = "nick-testing-db@test.it"
 const user_login_pass = "nick1234"
 
 const user_new_name = "NickTest"
-const user_new_email = "nick-testing-playwright@test.it"
+const user_new_email = "nick-testing-playwright+1@test.it"
 const user_new_pass = "123456"
 
 test('get redirected', async ({ page }) => {

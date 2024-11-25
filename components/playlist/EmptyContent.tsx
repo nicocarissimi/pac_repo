@@ -7,6 +7,7 @@ import Router from "next/router";
 import { useCallback } from "react";
 import { useSWRConfig } from "swr";
 import { ScrollArea } from "../ui/scroll-area";
+import { VideoInterface } from "@/libs/definitions";
 
 interface EmptyContentProps {
     playlistId: string
@@ -46,13 +47,13 @@ const EmptyContent: React.FC<EmptyContentProps> = ({playlistId}) => {
                     <h3 className="text-lg font-semibold mb-4">Suggested videos to add:</h3>
                     <ScrollArea className="h-[75%] p-4">
                     <div className="grid gap-4 md:grid-cols-2">
-                        {suggestedVideos.map((video) => (
+                        {suggestedVideos.map((video: VideoInterface) => (
                             <Card key={video.id} className="flex items-center p-4 hover:bg-zinc-600 transition-colors cursor-pointer gap-2 bg-zinc-900 border-0">
                                 <div className="w-[30%] h-[50px] bg-cover bg-center rounded-2xl" style={{ backgroundImage: `url(${video.thumbnailUrl})` }}></div>
                                 <div className="flex-grow">
                                     <h4 className="text-lg font-bold text-white">{video.title}</h4>
                                 </div>
-                                <Button variant="ghost" size="icon" onClick={()=>handleAddVideo(video.id)}>
+                                <Button variant="ghost" size="icon" onClick={()=>handleAddVideo(video?.id!)}>
                                     <PlusCircle className="h-5 w-5 text-white" />
                                     <span className="sr-only">Add to playlist</span>
                                 </Button>

@@ -58,8 +58,9 @@ const Auth = () => {
   };
 
   const login = useCallback(async () => {
-    if (!validateForm()) return;
-
+    if (!validateForm()) {
+      return;
+    }
     try {
       await signIn('credentials', {
         email,
@@ -74,7 +75,9 @@ const Auth = () => {
   }, [email, password, router]);
 
   const register = useCallback(async () => {
-    if (!validateForm()) return;
+    if (!validateForm()) {
+      return;
+    }
 
     try {
       await axios.post('/api/register', {

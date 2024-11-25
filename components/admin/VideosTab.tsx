@@ -42,7 +42,7 @@ export const VideosTab = () => {
     }
 
     const handleConvertDurationInInteger = (value: number) =>{
-      return Math.floor(value)*60 + Math.round(((value - Math.floor(value))*100),2)
+      return Math.floor(value)*60 + Math.round((value - Math.floor(value)) * 100) / 100;
     }
 
     

@@ -17,7 +17,7 @@ const videoSchema = z.object({
 })
 
 
-const formSchema = z.object({
+export const formSchema = z.object({
     title: z.string().min(1,{message: "Please insert title"}),   
     videos: z.array(videoSchema).nonempty({message: "Playlist can't be empty"})
   })
